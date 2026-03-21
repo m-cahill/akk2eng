@@ -132,6 +132,7 @@ M02 is the **evaluation + targeted improvement loop**: measure, diagnose, change
 
 1. **Eval harness first:** fixed dev split from `train.csv`, one primary metric (plus optional aux), save predictions every run so experiments are diffable.
 2. **Error analysis (M02 core):** group failures (names, numbers, OOV / rare signs, repetition, function words), count and rank buckets, and drive each sprint from the largest systematic gap — not from vibes or random tuning.
+   - what is model getting wrong?
 3. **Normalization layer (M03 preview early):** add a dedicated, testable transliteration normalization stage (unicode, delimiters, common OA transliteration quirks) only where the harness shows a delta — **M03** will formalize the full engine; in M02 you ship the smallest layer that earns points.
    - clean transliterations
    - remove noise
