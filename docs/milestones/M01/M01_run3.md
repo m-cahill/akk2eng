@@ -88,7 +88,7 @@ The system has achieved:
 
 - Verified GPU execution (Blackwell)
 - Full training + checkpoint pipeline
-- Deterministic inference (greedy, fixed seeds)
+- Deterministic inference
 - Valid Kaggle submission with fine-tuned baseline
 - First non-zero leaderboard signal (public LB)
 
