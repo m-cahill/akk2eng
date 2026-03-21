@@ -92,7 +92,7 @@ The system has achieved:
 - Valid Kaggle submission
 - Leaderboard score: 11.9
 
-This milestone establishes a fully operational baseline translation system.
+This milestone establishes a fully operational Akkadian → English translation system.
 
 **Next milestone:** M02 — evaluation + improvement loop (see `docs/akk2eng.md` roadmap).
 
