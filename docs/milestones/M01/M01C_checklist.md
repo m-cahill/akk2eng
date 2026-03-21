@@ -8,13 +8,18 @@
 
 ## 1. Package the checkpoint
 
-From the **repo root** (PowerShell):
+From the **repo root** (PowerShell). **Recommended:** zip **files only** at `outputs/m01_t5/` (excludes `checkpoint-*` dirs; smaller upload, same inference artifacts):
 
 ```powershell
-Compress-Archive -Path outputs/m01_t5/* -DestinationPath akk2eng-m01-model.zip -Force
+$files = Get-ChildItem outputs\m01_t5 -File
+Compress-Archive -Path ($files | ForEach-Object { $_.FullName }) -DestinationPath outputs\akk2eng-m01-model.zip -Force
 ```
 
-Or zip the **folder** so that after unzip, `config.json` sits at the dataset root or one level down (Kaggle often adds a single top-level folder — match `MODEL_INPUT` in the notebook to that path).
+Output: **`outputs/akk2eng-m01-model.zip`** (gitignored with `outputs/`).
+
+**Alternative (full directory, larger):** `Compress-Archive -Path outputs/m01_t5/* -DestinationPath outputs/full-m01_t5.zip -Force`
+
+After unzip on Kaggle, `config.json` must sit under `MODEL_INPUT` (sometimes one extra folder level — list `/kaggle/input` and adjust).
 
 **Required files inside the archive** (same as local `outputs/m01_t5/`): `config.json`, `model.safetensors` (or `pytorch_model.bin`), tokenizer files (`tokenizer.json`, `tokenizer_config.json`, `spiece.model`, etc.).
 

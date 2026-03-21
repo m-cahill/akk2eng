@@ -124,7 +124,9 @@ M00 proved this dual path with a dummy model; M01 and later milestones keep the 
 | Milestone | Score |
 |-----------|--------|
 | M00 | 0.0 |
-| M01 | TBD |
+| M01 | TBD — set after M01-C submit; run log: `docs/milestones/M01/M01_run3.md` |
+
+After Kaggle returns a score, replace the M01 cell with the numeric value (and complete `M01_run3.md`).
 
 ## M00 validation (Kaggle)
 

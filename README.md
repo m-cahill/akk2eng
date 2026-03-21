@@ -196,6 +196,7 @@ pytest
 - M01 GPU substrate run log: `docs/milestones/M01/M01_run1.md`
 - M01 full training run log: `docs/milestones/M01/M01_run2.md`
 - M01-C Kaggle checklist: `docs/milestones/M01/M01C_checklist.md`
+- M01-C submission run log: `docs/milestones/M01/M01_run3.md`
 
 ## License
 
