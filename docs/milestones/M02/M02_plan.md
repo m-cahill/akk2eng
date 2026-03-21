@@ -88,6 +88,22 @@ For each iteration:
 
 Prioritize **lexicon hints**, **normalization**, **decoding** before long retraining.
 
+## Quick +5 score strategy (tactical sprint)
+
+**Intent:** Stack **high-leverage, cheap** changes first to move the **public leaderboard** meaningfully above the M01 baseline (**11.9**). **+5** (i.e. toward **~16.9**) is a **stretch target**, not a guarantee — competition metrics are opaque and non-linear; every step still needs **dev harness** confirmation before a Kaggle burn.
+
+**Order (stop early if a step fails on dev):**
+
+| Priority | Move | Why it often pays |
+|----------|------|-------------------|
+| A | **Lock eval + error digest** (Step 2–3) in one session | Avoids fixing the wrong problem. |
+| B | **Transliteration normalization** (M03 preview) | Reduces tokenizer noise; fast if buckets show inconsistent unicode / punctuation / spacing. |
+| C | **Tiny lexicon injection** (M06 preview) — tens to low hundreds of high-confidence glosses | Akkadian is lexically sparse in the model; entity/lemma errors are common failure mode. |
+| D | **Decoding** — `max_new_tokens`, repetition / n-gram block, then **small beam** (2–4) *only if* repetition or truncation buckets dominate | Cheap inference-side gain; log loss of determinism if you leave greedy. |
+| E | **Short retrain** — +1–2 epochs, LR schedule tweak, or slightly larger batch *only if* A–D plateau on dev | Higher cost; only when hypothesis says capacity/data noise, not decoding. |
+
+**Rules:** one lever per submit; record **before/after** dev metric + Kaggle score in `M02_toolcalls.md`; do not stack B+C+D in one Kaggle submit without a local combined eval pass.
+
 ## Acceptance criteria
 
 | Requirement | Target |

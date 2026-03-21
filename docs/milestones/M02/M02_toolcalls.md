@@ -1,5 +1,7 @@
 # M02 — Tool calls log
 
+**Tactical sprint:** see [M02_plan.md — Quick +5 score strategy](M02_plan.md#quick-5-score-strategy-tactical-sprint).
+
 | Timestamp | Action | Result / notes |
 |-----------|--------|----------------|
 | | | |
