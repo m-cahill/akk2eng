@@ -144,3 +144,9 @@ M02 is the **evaluation + targeted improvement loop**: measure, diagnose, change
 7. **Keep the M01 contract** (submission schema, deterministic inference defaults) until a milestone explicitly widens it.
 
 Authority: `docs/akk2eng.md` (roadmap **M02**), `docs/moonshot.md` for north-star alignment.
+
+---
+
+## Final Verdict
+
+**M01 is a complete, auditable baseline:** spec → system → artifacts → **Kaggle validation** (public leaderboard **11.9**), with frozen run logs and release tags **v0.0.2-m01a** through **v0.0.4-m01c**. The translation stack is real, repeatable, and ready for **M02** to chase gains through measurement-first iteration — not more foundation building.
