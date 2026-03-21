@@ -88,7 +88,7 @@ Bring-up uses **conservative FP32** in the GPU probe path; full training can use
 
 **Active milestone.** M01 baseline (public LB **11.9**) is frozen; M02 improves score through **measurement-first** iteration.
 
-- **Dev decoding (M02-C):** greedy inference uses `repetition_penalty=1.2` and `no_repeat_ngram_size=3` (`config.py`); eval artifacts record full decoding dict. Latest logged dev chrF step-up: `docs/milestones/M02/M02_run1_m02c_decoding.md`.
+- **Dev decoding (M02-C):** greedy inference uses `repetition_penalty=1.2` and `no_repeat_ngram_size=3` (`config.py`); eval artifacts record full decoding dict. Latest logged dev chrF step-up: `docs/milestones/M02/M02_run1_m02c_decoding.md`. **Kaggle notebook** matches these flags; submit log: `docs/milestones/M02/M02_run2_kaggle.md` *(fill LB after submit)*.
 - **Plan:** `docs/milestones/M02/M02_plan.md` — dev eval harness, error buckets, targeted fixes (normalization preview, lexicon injection, decoding), re-submit only on proven deltas.  
 - **Tool log:** `docs/milestones/M02/M02_toolcalls.md`.  
 - **Strategy mirror:** `docs/milestones/M01/M01_run3.md` (section **Next: M02**).

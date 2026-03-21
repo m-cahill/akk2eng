@@ -191,7 +191,7 @@ python -m akk2eng.pipeline.run --model-dir outputs/m01_t5 --quiet
 
 Use the self-contained notebook:
 
-- `kaggle/akk2eng_m01_submission.ipynb`
+- `kaggle/akk2eng_m01_submission.ipynb` (includes **M02-C** `repetition_penalty` / `no_repeat_ngram_size` on `generate()`, aligned with local `config.py`)
 
 **Step-by-step (M01-C):** `docs/milestones/M01/M01C_checklist.md` (zip `outputs/m01_t5/`, upload as a dataset or Models asset, set paths, run all cells, submit).
 
