@@ -119,3 +119,16 @@ After this:
 - ✅ All work moves to **M02** (`docs/akk2eng.md` roadmap).
 
 **Frozen run logs:** `M01_run1.md`, `M01_run2.md`, and this file are the M01 authority; edit only for factual corrections or cross-links, not to backfill new work into M01.
+
+---
+
+## Next: M02 (where you gain points fast)
+
+M02 is the **evaluation + targeted improvement loop**: measure, diagnose, change *one* lever, re-measure, then ship when the numbers move.
+
+- **Eval harness:** fixed dev split from `train.csv`, comparable metrics run to run, and saved predictions so each experiment has a diffable artifact.
+- **Error analysis:** group failures (names, numbers, OOV / rare signs, repetition, function words) so work is hypothesis-driven, not random tuning.
+- **High-leverage fixes:** input normalization, lexicon or constraint hints, decoding / length controls, modest training changes — each tied to a before/after eval delta.
+- **Contract:** keep M01 submission schema and deterministic inference defaults unless a later milestone explicitly relaxes them.
+
+Authority: `docs/akk2eng.md` (roadmap **M02**), `docs/moonshot.md` for north-star alignment.
