@@ -172,8 +172,7 @@ def main() -> None:
     if not args.allow_cpu:
         if _is_pytorch_cpu_only_build():
             print(
-                "ERROR: PyTorch is CPU-only (no CUDA). "
-                "Install a CUDA wheel from pytorch.org.",
+                "ERROR: PyTorch is CPU-only (no CUDA). Install a CUDA wheel from pytorch.org.",
                 file=sys.stderr,
             )
             sys.exit(1)

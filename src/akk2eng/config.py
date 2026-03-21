@@ -19,3 +19,13 @@ DEFAULT_TRAIN_CSV = Path("data") / "train.csv"
 DEFAULT_TEST_CSV = Path("data") / "test.csv"
 DEFAULT_SUBMISSION_CSV = Path("outputs") / "submission.csv"
 DEFAULT_MODEL_DIR = Path("outputs") / "m01_t5"
+
+# M02 — fixed train/dev split (persist under data/splits/; data/ is gitignored)
+DEFAULT_SPLITS_DIR = Path("data") / "splits"
+DEFAULT_TRAIN_SPLIT_CSV = DEFAULT_SPLITS_DIR / "train_split.csv"
+DEFAULT_DEV_SPLIT_CSV = DEFAULT_SPLITS_DIR / "dev_split.csv"
+DEV_FRACTION = 0.1
+
+# M02 — eval artifacts (outputs/ is gitignored)
+DEFAULT_EVAL_OUTPUT_DIR = Path("outputs") / "eval"
+DEFAULT_EXPERIMENTS_DIR = Path("outputs") / "experiments"

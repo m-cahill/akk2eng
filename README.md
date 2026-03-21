@@ -164,6 +164,14 @@ python -m akk2eng.tools.checkpoint_hash outputs/m01_t5 --combined-only
 python -m akk2eng.pipeline.validate --train-csv data/train.csv --model-dir outputs/m01_t5
 ```
 
+**Dev eval (M02-A — fixed split, chrF + BLEU, artifacts):**
+
+```bash
+python -m akk2eng.pipeline.eval --train-csv data/train.csv --model-dir outputs/m01_t5
+```
+
+Writes `data/splits/train_split.csv` and `data/splits/dev_split.csv` once (reuse thereafter), then `outputs/eval/predictions_dev.csv`, `metrics.json`, `eval_summary.txt`, plus a snapshot under `outputs/experiments/exp_<UTC>/`. Regenerate splits from a new `train.csv` with `--force-splits`.
+
 Override paths:
 
 ```bash

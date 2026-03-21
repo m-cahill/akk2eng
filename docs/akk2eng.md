@@ -92,6 +92,30 @@ Bring-up uses **conservative FP32** in the GPU probe path; full training can use
 - **Tool log:** `docs/milestones/M02/M02_toolcalls.md`.  
 - **Strategy mirror:** `docs/milestones/M01/M01_run3.md` (section **Next: M02**).
 
+### M02 Evaluation Contract
+
+All improvements must be validated via:
+
+- deterministic dev split (**seed = 42**, **90 / 10**) persisted under `data/splits/` (`train_split.csv`, `dev_split.csv`);
+- saved predictions (`outputs/eval/predictions_dev.csv`);
+- saved metrics (`outputs/eval/metrics.json`) with **chrF** as the primary dev signal and **BLEU** as secondary.
+
+**Dev loop:** the exact Kaggle metric is **not** reproduced locally; **chrF improvement = permission to submit**; public leaderboard score is **validation only**. No probe submissions to reverse-engineer scoring.
+
+### Experiment Tracking
+
+All M02 experiments must produce:
+
+- `config.json`
+- `metrics.json`
+- `predictions_dev.csv`
+
+Stored under `outputs/experiments/exp_<timestamp>/` (and mirrored under `outputs/eval/` for the latest run). Artifacts are **required for audit** and stay **uncommitted** (`outputs/` is gitignored).
+
+### Submission Discipline
+
+Submissions are only allowed when **dev chrF improves** over the previous best (see `M02_plan.md` guardrails). Each submit is logged (e.g. `docs/milestones/M02/M02_runX.md`).
+
 **Exit:** scripted dev metric + at least one Kaggle submit **> 11.9** with audit trail (then M03/M06 per roadmap).
 
 ## Planned milestone roadmap

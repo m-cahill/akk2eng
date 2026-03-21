@@ -1,137 +1,317 @@
-# M02 — Evaluation + fast leaderboard climb
+# M02 — Evaluation + Fast Leaderboard Climb
 
-**Project:** akk2eng  
-**Milestone:** M02  
-**Phase:** Measurement-first improvement  
-**Status:** In progress (planning / execution)
+**Milestone ID:** M02  
+**Phase:** Measurement & Optimization  
+**Prerequisite:** M01 closed (`v0.0.4-m01c`)  
+**Status:** Active  
 
-**Prerequisite:** M01 complete (`v0.0.4-m01c`); public leaderboard **11.9** (see `docs/milestones/M01/M01_run3.md`).  
-**North star alignment:** `docs/moonshot.md`, `docs/akk2eng.md`.
+**North star:** `docs/moonshot.md` · **Source of truth:** `docs/akk2eng.md`
 
-## Objective
+---
 
-Improve **Kaggle leaderboard score** through a **tight eval loop**: every change is measured on a **fixed dev split** before it touches Kaggle. Optimize for **fast signal** (hours-to-days iterations), not architectural theater.
+## 1. Objective
 
-> **Not the goal:** random hyperparameter sweeps, huge retrains without a hypothesis, or breaking the M01 submission / determinism contract without an explicit decision.
+Establish a **measurement-first improvement system** and achieve a **verified leaderboard gain (>11.9)** through **targeted, explainable changes**.
 
-## Core principle
+> M02 is NOT about building new features.  
+> M02 is about **proving what actually improves translation quality**.
 
-> **One lever per experiment** — reproducible metric delta, saved predictions, short run log.
+---
 
-Strategy mirror (from `M01_run3.md` **Highest ROI next moves**):
+## 2. Core Philosophy
 
-1. **Eval harness first** — dev split + primary metric + artifacted predictions.  
-2. **Error analysis (M02 core)** — buckets, counts, sprint from the largest gap.  
-3. **Lexicon injection (M06 early leverage)** — small, auditable gloss when buckets justify it.  
-4. **Simple decoding tweaks** — length, beam *only if harness proves it*, repetition control; default stays **deterministic** unless a milestone widens policy.  
-5. **Normalization layer (M03 preview)** — transliteration cleanup / noise removal when the harness shows gain.  
-6. **Cheap training nudges** — only after the above are exhausted or clearly parallel.  
-7. **M01 contract** — schema `id,translation`; document any intentional relaxation.
+M02 introduces a strict loop:
 
-## Scope
+```text
+Measure → Diagnose → Change ONE thing → Re-measure → Submit (only if improved)
+```
 
-### In scope
+This replaces:
 
-| Workstream | Intent |
-|------------|--------|
-| **Dev eval CLI / module** | Extend or replace ad-hoc `pipeline.validate` with: fixed `SEED` split, **BLEU/chrF/SacreBLEU** (or competition-aligned proxy), write `outputs/eval/*.json` + optional `predictions.csv`. |
-| **Error buckets** | **Targeted error analysis workflow** (Step 3): reproducible table, bucket tags, ranked counts, samples + hypothesis before each fix. |
-| **Targeted fixes** | Normalization pass (flag-guarded), prompt tweaks, tiny lexicon table, `generate()` args — each behind a **single** config or flag. |
-| **Re-submit discipline** | Kaggle submit only when dev metric moves **up** vs last tagged baseline; record score in `docs/akk2eng.md` and a run log (e.g. `M02_run1.md` when created). |
+- intuition-driven iteration  
+- blind retraining  
+- Kaggle spam submissions  
 
-### Out of scope (defer)
+With:
 
-- Full **M03** normalization engine (only **preview** slices that win on the harness).  
-- Full **M06** lexicon pipeline (only **injection** experiments with provenance).  
-- New backbone model (**M09**) unless eval proves ceiling hit with smaller levers.  
-- Stochastic decoding as default (requires explicit governance note).
+- deterministic evaluation  
+- attributable improvements  
+- audit-ready decisions  
 
-## Implementation plan (suggested order)
+---
 
-### Step 1 — Baseline lock
+## 3. Scope
 
-- Record **M01 dev metric** on the chosen split (even if rough): document command + hash of `train.csv` slice or split seed in `M02_toolcalls.md`.  
-- Ensure `outputs/m01_t5/` (or current best checkpoint) is the **reference weights** for comparisons.
+### In Scope
 
-### Step 2 — Eval harness (M02 deliverable)
+#### 3.1 Evaluation Harness (FOUNDATIONAL)
 
-- Add `python -m akk2eng.pipeline.eval` (or equivalent) with: `--train-csv`, `--model-dir`, `--val-fraction` / `--seed`, metric output to stdout + JSON file.  
-- Optional: `--output-predictions` for diffing runs.  
-- **CI:** CPU-only smoke (tiny `max-rows`) so the module imports and runs.
+Create a **dev evaluation system**:
 
-### Step 3 — Targeted error analysis workflow (M02 core)
+- Split `train.csv` → **train / dev** (deterministic **seed = 42**, **90 / 10**).  
+- Persist splits (reused across all experiments):
 
-Use this **after** you have a fixed dev split and **saved predictions + references** (from Step 2 or a one-off export). Goal: answer **what the model gets wrong systematically**, not to eyeball random rows.
+  ```text
+  data/splits/
+    train_split.csv
+    dev_split.csv
+  ```
 
-1. **Freeze inputs** — Same `train.csv` revision, `--seed`, `val_fraction` (or row range) as the eval harness; record in `M02_toolcalls.md`.
-2. **Build a table** — One row per dev example: `id` (or index), `transliteration`, `reference`, `prediction`, optional token lengths / char counts.
-3. **Define buckets** (tag each row with one or more flags):
-   - **Repetition** — repeated n-grams or duplicated phrases in `prediction` vs reference length.
-   - **Named / lexical** — proper-like tokens, gloss mismatches, or OOV-ish transliteration spans (heuristic: digits, parentheses, rare subword splits if you log them later).
-   - **Numeric / metatext** — numbers, line markers, broken punctuation.
-   - **Under-translation** — very short `prediction` vs `reference` length ratio below a threshold.
-   - **Hallucination / drift** — content in `prediction` with weak lexical overlap with `reference` (simple overlap score as a first pass).
-4. **Count and rank** — Sort buckets by count and by **mean penalty** (if you have per-row loss or 1−BLEU proxy); pick **one** top bucket for the next sprint.
-5. **Sample for humans** — 5–10 rows per top bucket; paste into `M02_toolcalls.md` or a short `M02_error_digest.md` (create when needed) with **hypothesis** (“repetition from greedy decode”, “OA sign X under-translated”, etc.).
-6. **Hand off** — Next experiment must cite bucket + hypothesis in the tool log before code changes.
+  (`data/` is gitignored; splits are local audit inputs.)
 
-**Deliverable shape:** script under `src/akk2eng/` or `tools/`, or a notebook under `docs/` / `notebooks/` — but **outputs** must be reproducible from CLI + paths (no click-only workflows in the audit path).
+- CLI:
 
-### Step 4 — Fast climb iterations
+  ```bash
+  python -m akk2eng.pipeline.eval
+  ```
 
-For each iteration:
+- Outputs:
 
-1. Hypothesis from error table.  
-2. Implement **one** change.  
-3. Re-run eval; compare JSON / predictions to baseline.  
-4. If improved: optional Kaggle notebook refresh + submit; update leaderboard row.
+  ```text
+  outputs/
+    eval/
+      predictions_dev.csv
+      metrics.json
+      eval_summary.txt
+  ```
 
-Prioritize **lexicon hints**, **normalization**, **decoding** before long retraining.
+- Metrics (**M02 policy — authoritative**):
 
-## Quick +5 score strategy (tactical sprint)
+  - **Primary (dev loop): chrF** — main optimization signal (sacrebleu).  
+  - **Secondary: BLEU** — sanity check only.  
+  - **Kaggle leaderboard:** validation only; exact competition metric is **not** reproduced locally; **do not** probe-reverse-engineer via submissions.
 
-**Intent:** Stack **high-leverage, cheap** changes first to move the **public leaderboard** meaningfully above the M01 baseline (**11.9**). **+5** (i.e. toward **~16.9**) is a **stretch target**, not a guarantee — competition metrics are opaque and non-linear; every step still needs **dev harness** confirmation before a Kaggle burn.
+#### 3.2 Error Analysis Engine (HIGH ROI)
 
-**Order (stop early if a step fails on dev):**
+Add:
 
-| Priority | Move | Why it often pays |
-|----------|------|-------------------|
-| A | **Lock eval + error digest** (Step 2–3) in one session | Avoids fixing the wrong problem. |
-| B | **Transliteration normalization** (M03 preview) | Reduces tokenizer noise; fast if buckets show inconsistent unicode / punctuation / spacing. |
-| C | **Tiny lexicon injection** (M06 preview) — tens to low hundreds of high-confidence glosses | Akkadian is lexically sparse in the model; entity/lemma errors are common failure mode. |
-| D | **Decoding** — `max_new_tokens`, repetition / n-gram block, then **small beam** (2–4) *only if* repetition or truncation buckets dominate | Cheap inference-side gain; log loss of determinism if you leave greedy. |
-| E | **Short retrain** — +1–2 epochs, LR schedule tweak, or slightly larger batch *only if* A–D plateau on dev | Higher cost; only when hypothesis says capacity/data noise, not decoding. |
+```bash
+python -m akk2eng.pipeline.analyze_errors
+```
 
-**Rules:** one lever per submit; record **before/after** dev metric + Kaggle score in `M02_toolcalls.md`; do not stack B+C+D in one Kaggle submit without a local combined eval pass.
+Outputs:
 
-## Acceptance criteria
+```text
+outputs/analysis/
+  error_buckets.json
+  examples_by_bucket.txt
+```
 
-| Requirement | Target |
-|-------------|--------|
-| Reproducible dev metric | Same command + seed → same number (within documented GPU float noise if any CUDA eval). |
-| Before/after artifacts | Saved metrics + optional predictions for baseline and each winning experiment. |
-| Leaderboard | **Strict improvement** vs M01 **11.9** on at least one public submit (document in `akk2eng.md`). |
-| Governance | M02 changes documented in `M02_toolcalls.md`; no silent breaking of submission schema. |
+Initial buckets:
 
-## Risks
+- Named entities (PN, GN)  
+- Numbers / quantities  
+- Rare tokens (OOV)  
+- Repetition / hallucination  
+- Function words / grammar  
+- Word order issues  
 
-| Risk | Mitigation |
-|------|------------|
-| Dev metric ≠ Kaggle metric | Periodically re-align with competition scoring notes; keep Kaggle submits sparse but real. |
-| Overfitting dev split | Refresh split only with documented rationale; prefer stable held-out slice. |
-| Determinism drift (beam, etc.) | Log decoding config in run artifacts; default greedy until proven. |
+This drives ALL improvements.
 
-## Exit condition
+#### 3.3 Logging & Experiment Tracking
 
-M02 is **complete** when:
+Each eval run produces:
 
-- Dev harness is **stable and scripted**, and  
-- At least **one** Kaggle submission documents **score > 11.9** (public LB), with run log + toolcalls updated.
+```text
+outputs/experiments/
+  exp_<timestamp>/
+    config.json
+    metrics.json
+    predictions_dev.csv
+    notes.txt
+```
 
-Then proceed to **M03** (normalization engine) and **M06** (lexicon) per roadmap, or continue M02-style iteration under a new charter.
+Must include:
+
+- model version / checkpoint path  
+- preprocessing flags (when introduced)  
+- decoding settings  
+
+#### 3.4 First Targeted Improvements (Small + High Impact)
+
+Implement ONLY if supported by eval:
+
+**A. Normalization Preview (M03-lite)**
+
+- Lowercase normalization (if safe)  
+- Strip noise tokens  
+- Normalize delimiters  
+
+**B. Decoding Controls**
+
+- max_length tuning  
+- repetition penalty  
+- optional beam search (ONLY if proven better)  
+
+**C. Lexicon Injection (M06 preview)**
+
+- Small, high-confidence dictionary  
+- Apply as post-processing replacement (**preferred**)  
+- Source: `docs/kaggledocs/OA_Lexicon_eBL.csv` (light-touch; not full M06)  
+
+---
+
+## 4. Out of Scope
+
+- Full normalization engine (M03)  
+- Full lexicon system (M06)  
+- Model architecture changes  
+- Large retraining experiments  
+- Ensembles  
+
+---
+
+## 5. Execution Plan (Phased)
+
+### Phase M02-A — Eval Harness
+
+- Build `pipeline.eval`  
+- Save predictions + metrics  
+- Validate determinism  
+
+**Exit:** repeatable metric output  
+
+---
+
+### Phase M02-B — Error Analysis
+
+- Implement error bucketing  
+- Generate ranked failure categories  
+
+**Exit:** top 3 error classes identified  
+
+---
+
+### Phase M02-C — Targeted Fixes
+
+- Apply 1–2 improvements ONLY  
+- Re-run eval  
+- Compare metrics  
+
+**Exit:** measurable dev improvement  
+
+---
+
+### Phase M02-D — Kaggle Submission
+
+Submit ONLY if:
+
+- **dev chrF** improved vs previous best (permission to submit)  
+
+Record:
+
+```text
+docs/milestones/M02/M02_runX.md
+```
+
+**Exit:** leaderboard **> 11.9** (validation)  
+
+---
+
+## 6. Acceptance Criteria
+
+### Required
+
+- [ ] `pipeline.eval` implemented  
+- [ ] Deterministic dev split (seed=42, 90/10), persisted under `data/splits/`  
+- [ ] Metrics saved to disk (chrF + BLEU)  
+- [ ] Error analysis output generated (M02-B)  
+- [ ] At least ONE improvement tested via eval (M02-C)  
+- [ ] At least ONE Kaggle submission with full audit log (M02-D)  
+
+### Success Condition
+
+- Leaderboard score **> 11.9** (public LB, documented)  
+
+---
+
+## 7. Guardrails (CRITICAL)
+
+### 7.1 No Blind Submissions
+
+Every submission must be preceded by **dev chrF improvement**.
+
+### 7.2 One Variable Rule
+
+Only change ONE major variable per experiment.
+
+### 7.3 Determinism Enforcement
+
+- Fixed seeds  
+- Greedy decoding baseline preserved unless an experiment explicitly documents a change  
+
+### 7.4 Artifact Requirement
+
+Every run must produce:
+
+- predictions  
+- metrics  
+- config snapshot  
+
+(under `outputs/eval/` and `outputs/experiments/`, gitignored)  
+
+---
+
+## 8. Deliverables
+
+| Artifact        | Location                                 |
+| --------------- | ---------------------------------------- |
+| Eval CLI        | `src/akk2eng/pipeline/eval.py`           |
+| Error analysis  | `src/akk2eng/pipeline/analyze_errors.py` |
+| Split helpers   | `src/akk2eng/data/splits.py`             |
+| Metrics output  | `outputs/eval/metrics.json`              |
+| Experiment logs | `outputs/experiments/`                   |
+| Run logs        | `docs/milestones/M02/M02_runX.md`        |
+
+---
+
+## 9. Audit Focus
+
+M02 will be audited on:
+
+- Measurement validity  
+- Attribution clarity  
+- Determinism adherence  
+- Submission discipline  
+
+---
+
+## 10. Closeout Instructions (for Cursor)
+
+At milestone completion:
+
+1. Generate `M02_summary.md`, `M02_audit.md`  
+2. Update `docs/akk2eng.md`  
+3. Record best score + experiment lineage  
+4. Tag release `v0.0.X-m02`  
+5. Create next milestone folder `M03/`  
+
+Ensure all documentation is updated as necessary.
+
+---
+
+## 11. Strategic Notes
+
+This is the **most important milestone in the entire Kaggle trajectory**.
+
+M01 proved: **“We can produce signal.”**  
+M02 proves: **“We can systematically improve signal.”**
+
+---
+
+## 12. Authoritative Clarifications (locked)
+
+| Topic | Decision |
+| ----- | -------- |
+| Competition metric | Not reproduced locally; **chrF ↑ = submit gate**; Kaggle = validation only |
+| Dev split | **90 / 10**, `seed = 42`, `n_dev = max(1, int(0.10 * n))` |
+| Split storage | `data/splits/train_split.csv`, `data/splits/dev_split.csv`, reused forever unless `--force-splits` |
+| Lexicon | `docs/kaggledocs/OA_Lexicon_eBL.csv`; M02 = small / high-confidence / post-process only |
+| Artifacts | `outputs/` (eval, analysis, experiments) — **gitignored**, required locally for audit |
+
+---
 
 ## Related
 
-- ROI ordering: `docs/milestones/M01/M01_run3.md` (section **Next: M02**).  
-- Tool log: [M02_toolcalls.md](M02_toolcalls.md).  
-- Source of truth: `docs/akk2eng.md`.
+- Tool log: [M02_toolcalls.md](M02_toolcalls.md)  
+- M01 → M02 handoff: `docs/milestones/M01/M01_run3.md`  
