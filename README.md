@@ -55,7 +55,7 @@ nvidia-smi
 python -m akk2eng.tools.checkpoint_hash outputs/m01_t5
 ```
 
-Record outputs in `docs/milestones/M01/M01_run1.md` for audit.
+Record outputs in `docs/milestones/M01/M01_run1.md` for audit. Full training + checkpoint + inference audit: `docs/milestones/M01/M01_run2.md`.
 
 ### RTX 5090 / Blackwell local setup
 
@@ -177,7 +177,9 @@ Use the self-contained notebook:
 
 - `kaggle/akk2eng_m01_submission.ipynb`
 
-Add it as a Kaggle Notebook, attach the competition dataset, and (recommended) a **second dataset** containing your zipped `outputs/m01_t5/` export so `MODEL_INPUT` points at a folder with `config.json`. Run all cells; it writes `/kaggle/working/submission.csv`. Adjust `INPUT_DIR` / `MODEL_INPUT` if your Kaggle input folder names differ.
+**Step-by-step (M01-C):** `docs/milestones/M01/M01C_checklist.md` (zip `outputs/m01_t5/`, upload as a dataset, attach competition + model, set `INPUT_DIR` / `MODEL_INPUT`, run all cells, submit).
+
+Add the notebook as a Kaggle Notebook, attach the **competition** dataset and (recommended) a **second dataset** with your fine-tuned folder so `MODEL_INPUT` resolves to a path containing `config.json`. Run all cells; output is `/kaggle/working/submission.csv`. Adjust `INPUT_DIR` / `MODEL_INPUT` if slug names differ.
 
 ## Tests
 
@@ -191,7 +193,9 @@ pytest
 - Source of truth (schema, milestones): `docs/akk2eng.md`
 - M00 plan: `docs/milestones/M00/M00_plan.md`
 - M01 plan: `docs/milestones/M01/M01_plan.md`
-- M01 GPU run log (template): `docs/milestones/M01/M01_run1.md`
+- M01 GPU substrate run log: `docs/milestones/M01/M01_run1.md`
+- M01 full training run log: `docs/milestones/M01/M01_run2.md`
+- M01-C Kaggle checklist: `docs/milestones/M01/M01C_checklist.md`
 
 ## License
 

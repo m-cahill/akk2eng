@@ -69,13 +69,13 @@ M01 introduces the first real translation logic:
 
 ### M01 sub-phases (execution)
 
-**Active sub-phase:** **M01-B** (full local training). **M01** overall remains in progress until leaderboard > 0 and exit criteria in `M01_plan.md` are met.
+**Active sub-phase:** **M01-C** (Kaggle inference + submit). **M01** overall remains in progress until leaderboard > 0 and exit criteria in `M01_plan.md` are met.
 
 | Sub-phase | Status | Intent |
 |-----------|--------|--------|
-| **M01-A** | **Complete** (`v0.0.2-m01a`) | **Substrate verification** — CUDA/torch/transformers bring-up (`python -m akk2eng.tools.gpu_bringup`), FP32 probe, evidence in `docs/milestones/M01/M01_run1.md`. **Local only; not CI.** Blackwell (`sm_120`) requires a PyTorch CUDA 12.8+ wheel (see `README.md`). |
-| **M01-B** | **In progress** | **Full local training** — `python -m akk2eng.pipeline.train` (GPU, FP32 for bring-up parity), `outputs/m01_t5/`, `checkpoint_hash`, optional CUDA smoke / `nvidia-smi` capture. Plan: `docs/milestones/M01/M01B_plan.md`. |
-| **M01-C** | Pending | **Kaggle inference** — notebook + submission; first non-zero leaderboard signal. |
+| **M01-A** | **Complete** (`v0.0.2-m01a`) | **Substrate verification** — evidence in `docs/milestones/M01/M01_run1.md`. |
+| **M01-B** | **Complete** (`v0.0.3-m01b`) | **Full local training** — GPU FP32 train, `outputs/m01_t5/`, `checkpoint_hash`, `pipeline.run` smoke; evidence in `docs/milestones/M01/M01_run2.md`. Plan: `docs/milestones/M01/M01B_plan.md`. |
+| **M01-C** | **In progress** | **Kaggle inference** — notebook + submission; first non-zero leaderboard signal. |
 
 Bring-up uses **conservative FP32** in the GPU probe path; full training can use `--fp32` when validating new hardware. **GPU training may be slightly non-deterministic** between runs; treat **inference with fixed weights** as the primary determinism contract (see Determinism policy).
 
@@ -159,6 +159,7 @@ Full CI rigor (coverage gates, security scanning, reproducibility enforcement) d
 |-----|-------------|
 | v0.0.1-m00 | Kaggle-ready foundation; first valid submission pipeline |
 | v0.0.2-m01a | GPU substrate validated (RTX 5090 / Blackwell, CUDA 12.8); M01-A closed |
+| v0.0.3-m01b | Baseline model trained (T5-small), checkpoint + hash + local inference verified; M01-B closed |
 
 ## Related governance docs
 

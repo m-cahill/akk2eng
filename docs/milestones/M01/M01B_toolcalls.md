@@ -55,4 +55,6 @@ python -m akk2eng.pipeline.run --model-dir outputs/m01_t5
 
 | Timestamp | Action | Result / notes |
 |-----------|--------|----------------|
-| | | |
+| 2026-03-21 | Full train `--device cuda --fp32 --epochs 3` | 1173 steps, `train_loss` 2.541, model on `cuda:0`; see `M01_run2.md` |
+| 2026-03-21 | `checkpoint_hash outputs/m01_t5` | `MANIFEST_SHA256` recorded in `M01_run2.md` |
+| 2026-03-21 | `pipeline.run --model-dir outputs/m01_t5` | `outputs/submission.csv` valid schema |

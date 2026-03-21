@@ -8,8 +8,8 @@
 ### M01-A / M01-B / M01-C (execution split)
 
 - **M01-A — Substrate:** **Closed** (`v0.0.2-m01a`). Evidence: `docs/milestones/M01/M01_run1.md`. No further M01-A scope without a new audit.
-- **M01-B — Full train:** **Active.** See `docs/milestones/M01/M01B_plan.md` and `M01B_toolcalls.md`. Default `python -m akk2eng.pipeline.train` → `outputs/m01_t5/`.
-- **M01-C — Kaggle:** notebook inference + submission; leaderboard > 0.
+- **M01-B — Full train:** **Closed** (`v0.0.3-m01b`). Evidence: `docs/milestones/M01/M01_run2.md`. Plan: `M01B_plan.md`. **Frozen** — no further M01-B changes without a new audit.
+- **M01-C — Kaggle:** **Active.** Notebook inference + submission; leaderboard > 0.
 
 ## Objective
 
