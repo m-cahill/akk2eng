@@ -124,9 +124,9 @@ M00 proved this dual path with a dummy model; M01 and later milestones keep the 
 | Milestone | Score |
 |-----------|--------|
 | M00 | 0.0 |
-| M01 | Non-zero (baseline T5-small; exact public metric: optional paste from Kaggle UI) |
+| M01 | 11.9 |
 
-Run log: `docs/milestones/M01/M01_run3.md`.
+Run log: `docs/milestones/M01/M01_run3.md` (public leaderboard; private LB may differ at competition end).
 
 ## M00 validation (Kaggle)
 
@@ -162,7 +162,7 @@ Full CI rigor (coverage gates, security scanning, reproducibility enforcement) d
 | v0.0.1-m00 | Kaggle-ready foundation; first valid submission pipeline |
 | v0.0.2-m01a | GPU substrate validated (RTX 5090 / Blackwell, CUDA 12.8); M01-A closed |
 | v0.0.3-m01b | Baseline model trained (T5-small), checkpoint + hash + local inference verified; M01-B closed |
-| v0.0.4-m01c | Kaggle submission with fine-tuned baseline; non-zero leaderboard signal; M01 complete |
+| v0.0.4-m01c | Kaggle submission with fine-tuned baseline; public leaderboard 11.9; M01 complete |
 
 ## Related governance docs
 

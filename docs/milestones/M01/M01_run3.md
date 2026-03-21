@@ -66,7 +66,7 @@ Compress-Archive -Path ($files | ForEach-Object { $_.FullName }) -DestinationPat
 |--------|--------|
 | Competition | [Deep Past Initiative — Machine Translation](https://www.kaggle.com/competitions/deep-past-initiative-machine-translation/) |
 | Submission accepted | Yes |
-| **Public leaderboard score** | **Non-zero** (M01 exit criterion met). *Paste exact numeric metric from Kaggle UI into `docs/akk2eng.md` leaderboard table when you want the ledger to show the precise value.* |
+| **Public leaderboard score** | **11.9** |
 
 ---
 
@@ -90,7 +90,7 @@ The system has achieved:
 - Full training + checkpoint pipeline
 - Deterministic inference
 - Valid Kaggle submission
-- First non-zero leaderboard signal (public LB)
+- Leaderboard score: 11.9
 
 This milestone establishes a fully operational baseline translation system.
 
