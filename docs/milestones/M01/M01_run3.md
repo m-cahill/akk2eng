@@ -89,7 +89,7 @@ The system has achieved:
 - Verified GPU execution (Blackwell)
 - Full training + checkpoint pipeline
 - Deterministic inference
-- Valid Kaggle submission with fine-tuned baseline
+- Valid Kaggle submission
 - First non-zero leaderboard signal (public LB)
 
 This milestone establishes a fully operational baseline translation system.
