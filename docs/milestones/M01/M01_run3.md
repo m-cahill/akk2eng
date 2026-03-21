@@ -95,7 +95,7 @@ M01 is officially complete.
 
 Release tag: `v0.0.4-m01c` (Kaggle submission; public leaderboard **11.9**).
 
-The system has achieved:
+You achieved:
 
 - Verified GPU execution (Blackwell)
 - Full training + checkpoint pipeline
