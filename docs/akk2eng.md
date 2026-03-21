@@ -55,6 +55,7 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 |----|---------|--------|
 | **M00** | Kaggle-ready foundation + dummy pipeline + minimal CI + notebook stub + validated Kaggle submission | ✅ Complete (validated) |
 | **M01** | Baseline model + first non-zero Kaggle score | ✅ Complete (see `docs/milestones/M01/M01_plan.md`, tag `v0.0.4-m01c`) |
+| **M02** | Evaluation + fast leaderboard climb | 🚧 In progress (`docs/milestones/M02/M02_plan.md`) |
 
 ## M01 scope (baseline model)
 
@@ -82,6 +83,16 @@ Bring-up uses **conservative FP32** in the GPU probe path; full training can use
 **Environment notes:**
 - `pyproject.toml` pins **`numpy` 1.x** (`>=1.26,<2`) for compatibility with the PyTorch + `accelerate` / `Trainer` stack; do not upgrade to NumPy 2.x for this milestone without re-validating training.
 - **Blackwell GPUs** (`sm_120`, e.g. RTX 5090) need a PyTorch build compiled with CUDA 12.8+ (e.g. `2.10+cu128`). This is a **required local substrate choice** for M01-A GPU validation on Blackwell; CI stays on CPU-safe PyPI wheels. The repo pin (`torch>=2.4`) has no upper bound so both tracks satisfy the declared dependency. Install the correct wheel via `--index-url .../cu128` (see `README.md`). `gpu_bringup` detects arch mismatches and prints an actionable error.
+
+## M02 scope (evaluation + fast leaderboard climb)
+
+**Active milestone.** M01 baseline (public LB **11.9**) is frozen; M02 improves score through **measurement-first** iteration.
+
+- **Plan:** `docs/milestones/M02/M02_plan.md` — dev eval harness, error buckets, targeted fixes (normalization preview, lexicon injection, decoding), re-submit only on proven deltas.  
+- **Tool log:** `docs/milestones/M02/M02_toolcalls.md`.  
+- **Strategy mirror:** `docs/milestones/M01/M01_run3.md` (section **Next: M02**).
+
+**Exit:** scripted dev metric + at least one Kaggle submit **> 11.9** with audit trail (then M03/M06 per roadmap).
 
 ## Planned milestone roadmap
 
