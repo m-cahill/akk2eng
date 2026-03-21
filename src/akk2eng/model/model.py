@@ -11,6 +11,8 @@ from transformers import PreTrainedModel, PreTrainedTokenizerBase
 
 from akk2eng.config import (
     BASE_MODEL_ID,
+    DECODE_NO_REPEAT_NGRAM_SIZE,
+    DECODE_REPETITION_PENALTY,
     MAX_INPUT_LENGTH,
     MAX_NEW_TOKENS,
     SEED,
@@ -104,6 +106,8 @@ class T5BaselineTranslator:
                 max_new_tokens=MAX_NEW_TOKENS,
                 do_sample=False,
                 num_beams=1,
+                repetition_penalty=DECODE_REPETITION_PENALTY,
+                no_repeat_ngram_size=DECODE_NO_REPEAT_NGRAM_SIZE,
             )
             for row in gen:
                 out_lens.append(int((row != self._tokenizer.pad_token_id).sum().item()))

@@ -4,7 +4,7 @@
 
 | Timestamp | Action | Result / notes |
 |-----------|--------|----------------|
-| | | |
+| 2026-03-21 | M02-C: `repetition_penalty=1.2`, `no_repeat_ngram_size=3` in `T5BaselineTranslator.generate` | Dev chrF 18.65→34.41; repetition bucket 87.8%→73.7%; see [M02_run1_m02c_decoding.md](M02_run1_m02c_decoding.md) |
 
 ## Targeted error analysis workflow (checklist)
 
@@ -27,8 +27,11 @@ Use with **frozen** dev predictions + references (same seed / split as eval). Se
 ## Copy-paste anchors (fill as M02 lands)
 
 ```bash
-# Dev eval (placeholder — implement per M02_plan Step 2)
-python -m akk2eng.pipeline.validate --train-csv data/train.csv --model-dir outputs/m01_t5
+# Dev eval + metrics (M02-A)
+python -m akk2eng.pipeline.eval --train-csv data/train.csv --model-dir outputs/m01_t5
+
+# Error buckets (M02-B)
+python -m akk2eng.pipeline.analyze_errors
 
 # Local submission smoke (unchanged contract)
 python -m akk2eng.pipeline.run --model-dir outputs/m01_t5

@@ -13,6 +13,8 @@ from typing import Any
 import sacrebleu
 
 from akk2eng.config import (
+    DECODE_NO_REPEAT_NGRAM_SIZE,
+    DECODE_REPETITION_PENALTY,
     DEFAULT_DEV_SPLIT_CSV,
     DEFAULT_EVAL_OUTPUT_DIR,
     DEFAULT_EXPERIMENTS_DIR,
@@ -21,6 +23,7 @@ from akk2eng.config import (
     DEFAULT_TRAIN_CSV,
     DEFAULT_TRAIN_SPLIT_CSV,
     DEV_FRACTION,
+    MAX_NEW_TOKENS,
     SEED,
 )
 from akk2eng.data.loader import load_csv
@@ -92,6 +95,13 @@ def run_eval(
     out_pred.to_csv(pred_path, index=False)
 
     metrics_path = eval_output_dir / "metrics.json"
+    decoding = {
+        "do_sample": False,
+        "num_beams": 1,
+        "max_new_tokens": MAX_NEW_TOKENS,
+        "repetition_penalty": DECODE_REPETITION_PENALTY,
+        "no_repeat_ngram_size": DECODE_NO_REPEAT_NGRAM_SIZE,
+    }
     metrics_blob = {
         **metrics,
         "primary_metric": "chrf",
@@ -103,6 +113,7 @@ def run_eval(
         "dev_split_csv": str(Path(dev_split_csv).resolve()),
         "train_split_csv": str(Path(train_split_csv).resolve()),
         "model_dir": str(Path(model_dir).resolve()) if model_dir else None,
+        "decoding": decoding,
     }
     metrics_path.write_text(json.dumps(metrics_blob, indent=2) + "\n", encoding="utf-8")
 
@@ -113,6 +124,11 @@ def run_eval(
         f"secondary (BLEU): {metrics['bleu']:.4f}",
         f"sacrebleu: {metrics['sacrebleu_version']}",
         f"seed: {SEED}, dev_fraction: {DEV_FRACTION}",
+        (
+            f"decoding: greedy, repetition_penalty={DECODE_REPETITION_PENALTY}, "
+            f"no_repeat_ngram_size={DECODE_NO_REPEAT_NGRAM_SIZE}, "
+            f"max_new_tokens={MAX_NEW_TOKENS}"
+        ),
         f"predictions: {pred_path}",
         f"metrics: {metrics_path}",
     ]
@@ -140,6 +156,7 @@ def run_eval(
         "batch_size": batch_size,
         "eval_output_dir": str(eval_output_dir.resolve()),
         "sacrebleu_version": metrics["sacrebleu_version"],
+        "decoding": decoding,
     }
     (exp_dir / "config.json").write_text(
         json.dumps(config_blob, indent=2) + "\n",
