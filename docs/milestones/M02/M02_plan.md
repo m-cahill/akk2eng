@@ -35,7 +35,7 @@ Strategy mirror (from `M01_run3.md` **Highest ROI next moves**):
 | Workstream | Intent |
 |------------|--------|
 | **Dev eval CLI / module** | Extend or replace ad-hoc `pipeline.validate` with: fixed `SEED` split, **BLEU/chrF/SacreBLEU** (or competition-aligned proxy), write `outputs/eval/*.json` + optional `predictions.csv`. |
-| **Error buckets** | Script or notebook: tag failure modes (names, numbers, OOV, repetition, etc.), counts, example rows. |
+| **Error buckets** | **Targeted error analysis workflow** (Step 3): reproducible table, bucket tags, ranked counts, samples + hypothesis before each fix. |
 | **Targeted fixes** | Normalization pass (flag-guarded), prompt tweaks, tiny lexicon table, `generate()` args — each behind a **single** config or flag. |
 | **Re-submit discipline** | Kaggle submit only when dev metric moves **up** vs last tagged baseline; record score in `docs/akk2eng.md` and a run log (e.g. `M02_run1.md` when created). |
 
@@ -59,9 +59,23 @@ Strategy mirror (from `M01_run3.md` **Highest ROI next moves**):
 - Optional: `--output-predictions` for diffing runs.  
 - **CI:** CPU-only smoke (tiny `max-rows`) so the module imports and runs.
 
-### Step 3 — Error analysis
+### Step 3 — Targeted error analysis workflow (M02 core)
 
-- One-shot or small script: load dev predictions + references, aggregate buckets, export a markdown or CSV summary for the team.
+Use this **after** you have a fixed dev split and **saved predictions + references** (from Step 2 or a one-off export). Goal: answer **what the model gets wrong systematically**, not to eyeball random rows.
+
+1. **Freeze inputs** — Same `train.csv` revision, `--seed`, `val_fraction` (or row range) as the eval harness; record in `M02_toolcalls.md`.
+2. **Build a table** — One row per dev example: `id` (or index), `transliteration`, `reference`, `prediction`, optional token lengths / char counts.
+3. **Define buckets** (tag each row with one or more flags):
+   - **Repetition** — repeated n-grams or duplicated phrases in `prediction` vs reference length.
+   - **Named / lexical** — proper-like tokens, gloss mismatches, or OOV-ish transliteration spans (heuristic: digits, parentheses, rare subword splits if you log them later).
+   - **Numeric / metatext** — numbers, line markers, broken punctuation.
+   - **Under-translation** — very short `prediction` vs `reference` length ratio below a threshold.
+   - **Hallucination / drift** — content in `prediction` with weak lexical overlap with `reference` (simple overlap score as a first pass).
+4. **Count and rank** — Sort buckets by count and by **mean penalty** (if you have per-row loss or 1−BLEU proxy); pick **one** top bucket for the next sprint.
+5. **Sample for humans** — 5–10 rows per top bucket; paste into `M02_toolcalls.md` or a short `M02_error_digest.md` (create when needed) with **hypothesis** (“repetition from greedy decode”, “OA sign X under-translated”, etc.).
+6. **Hand off** — Next experiment must cite bucket + hypothesis in the tool log before code changes.
+
+**Deliverable shape:** script under `src/akk2eng/` or `tools/`, or a notebook under `docs/` / `notebooks/` — but **outputs** must be reproducible from CLI + paths (no click-only workflows in the audit path).
 
 ### Step 4 — Fast climb iterations
 
