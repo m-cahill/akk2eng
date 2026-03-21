@@ -23,6 +23,8 @@ venv/
 *.swp
 .DS_Store
 Thumbs.db
+.cursorrules
+
 
 # Testing / coverage
 .pytest_cache/
