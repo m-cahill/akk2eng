@@ -195,6 +195,7 @@ pytest
 - Source of truth (schema, milestones): `docs/akk2eng.md`
 - M00 plan: `docs/milestones/M00/M00_plan.md`
 - M01 plan: `docs/milestones/M01/M01_plan.md`
+- M01 audit / summary: `docs/milestones/M01/M01_audit.md`, `docs/milestones/M01/M01_summary.md`
 - M02 plan (fast leaderboard climb): `docs/milestones/M02/M02_plan.md`
 - M01 GPU substrate run log: `docs/milestones/M01/M01_run1.md`
 - M01 full training run log: `docs/milestones/M01/M01_run2.md`

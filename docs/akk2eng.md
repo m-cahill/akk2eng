@@ -54,7 +54,7 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 | ID | Summary | Status |
 |----|---------|--------|
 | **M00** | Kaggle-ready foundation + dummy pipeline + minimal CI + notebook stub + validated Kaggle submission | ✅ Complete (validated) |
-| **M01** | Baseline model + first non-zero Kaggle score | ✅ Complete (see `docs/milestones/M01/M01_plan.md`, tag `v0.0.4-m01c`) |
+| **M01** | Baseline model + first non-zero Kaggle score | ✅ Complete (`M01_plan.md`, `M01_audit.md`, `M01_summary.md`; tag `v0.0.4-m01c`) |
 | **M02** | Evaluation + fast leaderboard climb | 🚧 In progress (`docs/milestones/M02/M02_plan.md`) |
 
 ## M01 scope (baseline model)

@@ -148,3 +148,8 @@ Responsibilities:
 ## Required updates to `docs/akk2eng.md`
 
 Cursor updates the project source of truth when M01 behavior lands: milestones table, M01 scope, roadmap, execution modes, determinism policy, leaderboard tracking (see live `docs/akk2eng.md`).
+
+## Closeout artifacts
+
+- **Audit:** [M01_audit.md](M01_audit.md)  
+- **Summary:** [M01_summary.md](M01_summary.md)
