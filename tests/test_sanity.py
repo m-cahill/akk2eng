@@ -1,4 +1,4 @@
-"""Sanity tests: stub pipeline produces a valid submission file."""
+"""Sanity tests: pipeline produces a valid, deterministic submission file."""
 
 from pathlib import Path
 
@@ -19,13 +19,17 @@ def test_pipeline_writes_submission(tmp_path: Path) -> None:
     submission_csv = tmp_path / "submission.csv"
     _minimal_test_csv(test_csv)
 
-    run_pipeline(test_csv, submission_csv)
+    run_pipeline(test_csv, submission_csv, quiet=True, batch_size=2)
 
     assert submission_csv.is_file()
     out = pd.read_csv(submission_csv)
     assert list(out.columns) == ["id", "translation"]
     assert len(out) == 2
-    assert (out["translation"] == "dummy translation").all()
+    assert out["translation"].astype(str).str.len().gt(0).all()
+
+    run_pipeline(test_csv, submission_csv, quiet=True, batch_size=2)
+    out2 = pd.read_csv(submission_csv)
+    assert out["translation"].tolist() == out2["translation"].tolist()
 
 
 def test_load_csv_missing_file(tmp_path: Path) -> None:

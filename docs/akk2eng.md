@@ -46,16 +46,87 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 | `tests/` | Pytest sanity tests |
 | `kaggle/` | Kaggle notebook(s), self-contained for code competition |
 | `data/` | Local competition CSVs (gitignored) |
-| `outputs/` | Local `submission.csv` (gitignored) |
+| `outputs/` | Local `submission.csv` and M01 fine-tuned weights (gitignored) |
+| `src/akk2eng/tools/` | Local substrate utilities (GPU bring-up, checkpoint hash); not used in CI |
 
 ## Milestones
 
 | ID | Summary | Status |
 |----|---------|--------|
 | **M00** | Kaggle-ready foundation + dummy pipeline + minimal CI + notebook stub + validated Kaggle submission | ✅ Complete (validated) |
-| **M01** | First non-zero Kaggle score via baseline translation logic | 📋 Planned (see `docs/milestones/M01/M01_plan.md`) |
+| **M01** | Baseline model + first non-zero Kaggle score | 🚧 In progress (see `docs/milestones/M01/M01_plan.md`) |
 
-## M00 Validation (Kaggle)
+## M01 scope (baseline model)
+
+M01 introduces the first real translation logic:
+
+- HuggingFace seq2seq baseline: **`google-t5/t5-small`**, fine-tuned on `train.csv` **locally**
+- Deterministic inference (greedy / no sampling)
+- Minimal validation harness (`python -m akk2eng.pipeline.validate`)
+- Kaggle notebook upgraded to real inference: `kaggle/akk2eng_m01_submission.ipynb` (attach fine-tuned checkpoint as a separate input dataset)
+
+**Goal:** achieve the first non-zero leaderboard score while preserving the M00 submission and execution contract.
+
+### M01 sub-phases (execution)
+
+**Active sub-phase:** **M01-B** (full local training). **M01** overall remains in progress until leaderboard > 0 and exit criteria in `M01_plan.md` are met.
+
+| Sub-phase | Status | Intent |
+|-----------|--------|--------|
+| **M01-A** | **Complete** (`v0.0.2-m01a`) | **Substrate verification** — CUDA/torch/transformers bring-up (`python -m akk2eng.tools.gpu_bringup`), FP32 probe, evidence in `docs/milestones/M01/M01_run1.md`. **Local only; not CI.** Blackwell (`sm_120`) requires a PyTorch CUDA 12.8+ wheel (see `README.md`). |
+| **M01-B** | **In progress** | **Full local training** — `python -m akk2eng.pipeline.train` (GPU, FP32 for bring-up parity), `outputs/m01_t5/`, `checkpoint_hash`, optional CUDA smoke / `nvidia-smi` capture. Plan: `docs/milestones/M01/M01B_plan.md`. |
+| **M01-C** | Pending | **Kaggle inference** — notebook + submission; first non-zero leaderboard signal. |
+
+Bring-up uses **conservative FP32** in the GPU probe path; full training can use `--fp32` when validating new hardware. **GPU training may be slightly non-deterministic** between runs; treat **inference with fixed weights** as the primary determinism contract (see Determinism policy).
+
+**Environment notes:**
+- `pyproject.toml` pins **`numpy` 1.x** (`>=1.26,<2`) for compatibility with the PyTorch + `accelerate` / `Trainer` stack; do not upgrade to NumPy 2.x for this milestone without re-validating training.
+- **Blackwell GPUs** (`sm_120`, e.g. RTX 5090) need a PyTorch build compiled with CUDA 12.8+ (e.g. `2.10+cu128`). This is a **required local substrate choice** for M01-A GPU validation on Blackwell; CI stays on CPU-safe PyPI wheels. The repo pin (`torch>=2.4`) has no upper bound so both tracks satisfy the declared dependency. Install the correct wheel via `--index-url .../cu128` (see `README.md`). `gpu_bringup` detects arch mismatches and prints an actionable error.
+
+## Planned milestone roadmap
+
+| ID | Focus |
+|----|--------|
+| M01 | Baseline model (first score) |
+| M02 | Evaluation harness |
+| M03 | Normalization engine |
+| M04 | Sentence alignment |
+| M05 | Data augmentation |
+| M06 | Lexicon integration |
+| M07 | Named entity handling |
+| M08 | Rule-based improvements |
+| M09 | Model upgrade |
+| M10 | Training stabilization |
+| M11 | Post-processing |
+| M12 | Final submission system |
+
+## Execution modes (invariant)
+
+All milestones must support:
+
+1. **Local execution** — e.g. `python -m akk2eng.pipeline.run` (or `python -m akk2eng.run_local`), with paths defaulting to repo-root-relative `data/` and `outputs/` (see `README.md`).
+2. **Kaggle notebook execution** — self-contained notebook under `kaggle/`, competition data attached, submission written to `/kaggle/working/submission.csv`.
+
+**Outputs** must match the competition schema: columns `id`, `translation`, one row per test `id`. Local and Kaggle runs must stay aligned on this contract even when file paths differ (`data/test.csv` vs `/kaggle/input/.../test.csv`).
+
+M00 proved this dual path with a dummy model; M01 and later milestones keep the same contract while improving model quality.
+
+## Determinism policy
+
+- Pipelines must produce **identical outputs** for **identical inputs** and **identical saved model weights**
+- **Random seeds** are fixed for training and inference utilities (project default: `42`)
+- **No stochastic decoding** unless explicitly approved for an experiment; M01 uses greedy generation
+- **Training on GPU** may yield small run-to-run differences; compare checkpoints with `python -m akk2eng.tools.checkpoint_hash` when auditing repeatability
+- **Inference** with **fixed checkpoint files** and greedy decoding is the strict determinism target; GPU vs CPU inference for the same weights should match schema and be stable for the same code path, subject only to documented numerical edge cases
+
+## Leaderboard tracking
+
+| Milestone | Score |
+|-----------|--------|
+| M00 | 0.0 |
+| M01 | TBD |
+
+## M00 validation (Kaggle)
 
 M00 achieved full end-to-end validation via Kaggle execution:
 
@@ -82,20 +153,12 @@ Scope intentionally minimal to prioritize Kaggle submission readiness.
 
 Full CI rigor (coverage gates, security scanning, reproducibility enforcement) deferred to post-M01 milestones.
 
-## Execution Contract (M00)
-
-The system must support two execution modes:
-
-1. **Local:** `python -m akk2eng.pipeline.run` (or `python -m akk2eng.run_local`)
-2. **Kaggle:** Notebook-based execution producing `/kaggle/working/submission.csv`
-
-Both paths must produce identical schema-compliant outputs (`id`, `translation`).
-
-## Release Tags
+## Release tags
 
 | Tag | Description |
 |-----|-------------|
 | v0.0.1-m00 | Kaggle-ready foundation; first valid submission pipeline |
+| v0.0.2-m01a | GPU substrate validated (RTX 5090 / Blackwell, CUDA 12.8); M01-A closed |
 
 ## Related governance docs
 

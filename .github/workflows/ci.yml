@@ -18,6 +18,12 @@ jobs:
           python-version: "3.10"
           cache: pip
 
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: huggingface-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: huggingface-${{ runner.os }}-
+
       - name: Install package + dev tools
         run: pip install -e ".[dev]"
 
