@@ -124,6 +124,8 @@ After this:
 
 ## Next: M02 (where you gain points fast)
 
+Now we stop "building" and start **improving**:
+
 M02 is the **evaluation + targeted improvement loop**: measure, diagnose, change *one* lever, re-measure, then ship when the numbers move.
 
 - **Eval harness:** fixed dev split from `train.csv`, comparable metrics run to run, and saved predictions so each experiment has a diffable artifact.
