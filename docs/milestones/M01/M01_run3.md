@@ -128,9 +128,11 @@ Now we stop "building" and start **improving**:
 
 M02 is the **evaluation + targeted improvement loop**: measure, diagnose, change *one* lever, re-measure, then ship when the numbers move.
 
-- **Eval harness:** fixed dev split from `train.csv`, comparable metrics run to run, and saved predictions so each experiment has a diffable artifact.
-- **Error analysis:** group failures (names, numbers, OOV / rare signs, repetition, function words) so work is hypothesis-driven, not random tuning.
-- **High-leverage fixes:** input normalization, lexicon or constraint hints, decoding / length controls, modest training changes — each tied to a before/after eval delta.
-- **Contract:** keep M01 submission schema and deterministic inference defaults unless a later milestone explicitly relaxes them.
+### Highest ROI next moves:
+
+1. **Eval harness first:** fixed dev split from `train.csv`, one primary metric (plus optional aux), save predictions every run so experiments are diffable.
+2. **Error buckets:** group failures (names, numbers, OOV / rare signs, repetition, function words) and count them — work from the biggest bucket, not from vibes.
+3. **Cheap levers before heavy ones:** input normalization, decoding / length controls, small glossaries for top entities — each change re-run the harness before touching architecture or long retrains.
+4. **Keep the M01 contract** (submission schema, deterministic inference defaults) until a milestone explicitly widens it.
 
 Authority: `docs/akk2eng.md` (roadmap **M02**), `docs/moonshot.md` for north-star alignment.
