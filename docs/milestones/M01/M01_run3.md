@@ -103,6 +103,8 @@ You achieved:
 - Valid Kaggle submission
 - Leaderboard score: 11.9
 
+> **Spec → System → Artifact → External Validation**
+
 This milestone establishes a fully operational Akkadian → English translation system.
 
 **Next milestone:** M02 — evaluation + targeted improvement loop (see `docs/akk2eng.md` roadmap).
