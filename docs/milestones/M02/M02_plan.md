@@ -83,6 +83,8 @@ Create a **dev evaluation system**:
 
 #### 3.2 Error Analysis Engine (HIGH ROI)
 
+**Implemented:** `python -m akk2eng.pipeline.analyze_errors` reads `outputs/eval/predictions_dev.csv` by default.
+
 Add:
 
 ```bash
@@ -94,7 +96,7 @@ Outputs:
 ```text
 outputs/analysis/
   error_buckets.json
-  examples_by_bucket.txt
+  bucket_examples.txt
 ```
 
 Initial buckets:

@@ -29,3 +29,5 @@ DEV_FRACTION = 0.1
 # M02 — eval artifacts (outputs/ is gitignored)
 DEFAULT_EVAL_OUTPUT_DIR = Path("outputs") / "eval"
 DEFAULT_EXPERIMENTS_DIR = Path("outputs") / "experiments"
+DEFAULT_PREDICTIONS_DEV_CSV = DEFAULT_EVAL_OUTPUT_DIR / "predictions_dev.csv"
+DEFAULT_ANALYSIS_OUTPUT_DIR = Path("outputs") / "analysis"
