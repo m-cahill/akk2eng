@@ -143,7 +143,7 @@ Responsibilities:
 
 > **Leaderboard score > 0.0** (first non-zero signal)
 
-**Met** (M01-C). Proceed to **M02** (evaluation + diagnostics).
+**Met** (M01-C). Proceed to **M02** (evaluation + targeted improvement loop).
 
 ## Required updates to `docs/akk2eng.md`
 

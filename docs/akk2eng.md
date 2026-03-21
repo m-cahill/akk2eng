@@ -88,7 +88,7 @@ Bring-up uses **conservative FP32** in the GPU probe path; full training can use
 | ID | Focus |
 |----|--------|
 | M01 | Baseline model (first score) |
-| M02 | Evaluation harness |
+| M02 | Evaluation + targeted improvement loop |
 | M03 | Normalization engine |
 | M04 | Sentence alignment |
 | M05 | Data augmentation |

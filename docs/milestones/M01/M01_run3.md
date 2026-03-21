@@ -94,6 +94,6 @@ The system has achieved:
 
 This milestone establishes a fully operational Akkadian → English translation system.
 
-**Next milestone:** M02 — evaluation + improvement loop (see `docs/akk2eng.md` roadmap).
+**Next milestone:** M02 — evaluation + targeted improvement loop (see `docs/akk2eng.md` roadmap).
 
 **Governance:** No further M01 scope without a new milestone charter; product work proceeds under M02+.
