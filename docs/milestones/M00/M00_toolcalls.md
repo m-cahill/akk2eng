@@ -18,3 +18,6 @@
 | 2026-03-21 | StrReplace | Update M01_plan.md for first non-zero score | docs/milestones/M01/M01_plan.md | ✅ Complete |
 | 2026-03-21 | StrReplace | Fix .gitignore /data/ /outputs/ (root only) | .gitignore | ✅ Complete |
 | 2026-03-21 | Shell | git commit + tag v0.0.1-m00 | — | ✅ Complete |
+| 2026-03-21 | Write | M00_run1.md CI analysis | docs/milestones/M00/ | ✅ Complete |
+| 2026-03-21 | StrReplace | M00 formal closeout: Release Tags, CI ID, final statement | docs/akk2eng.md, M00_*.md, M01_plan | ✅ Complete |
+| 2026-03-21 | Shell | Commit + retag v0.0.1-m00 + push | — | ✅ Complete |
