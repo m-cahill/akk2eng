@@ -110,3 +110,28 @@ M00 was **compressed** from the originally proposed "enterprise CI foundation" p
 > **Kaggle submission pipeline operational.**
 
 The system can produce a valid `submission.csv` both locally and on Kaggle. M01 can now focus on achieving a non-zero leaderboard score via baseline translation logic.
+
+---
+
+## 8. CI Validation
+
+- **Run ID:** 23370891164
+- **Status:** Success (Ruff + pytest passed)
+- **Analysis:** `docs/milestones/M00/M00_run1.md`
+
+---
+
+## Final Closeout
+
+M00 is officially closed.
+
+The system has achieved:
+
+- End-to-end Kaggle execution
+- Valid submission artifact
+- Verified CI integrity
+- Deterministic pipeline baseline
+
+This milestone establishes the operational foundation for all future work.
+
+**Next milestone:** M01 — baseline model with first non-zero score.

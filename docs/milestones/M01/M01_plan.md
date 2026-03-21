@@ -16,9 +16,13 @@ M00 proved the pipeline works. M01 replaces the dummy model with **baseline tran
 
 ## In Scope (to be detailed)
 
-- Replace dummy inference with baseline logic (e.g. retrieval, lexicon, rule-based)
+- Replace dummy inference with baseline logic:
+  - Retrieval from `train.csv`, or
+  - Lexicon lookup (`OA_Lexicon_eBL.csv`), or
+  - HuggingFace / pretrained seq2seq (T5, mBART, etc.)
 - Achieve non-zero score on leaderboard
 - Maintain submission format and Kaggle compatibility
+- Preserve deterministic pipeline
 
 ## Out of Scope
 

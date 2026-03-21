@@ -17,6 +17,7 @@ This audit covers the M00 delta: repository initialization, dummy pipeline, mini
 
 | Evidence | Source | Finding |
 |----------|--------|---------|
+| CI run 23370891164 | GitHub Actions | Ruff + pytest passed; see `M00_run1.md` |
 | Kaggle notebook execution | User validation | Notebook ran successfully in Kaggle environment |
 | Submission acceptance | Kaggle leaderboard | Submission accepted; score 0.0 returned |
 | Local pipeline run | `python -m akk2eng.pipeline.run` | Produces `outputs/submission.csv` with correct schema |

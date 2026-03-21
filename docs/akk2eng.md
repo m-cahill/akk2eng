@@ -91,6 +91,12 @@ The system must support two execution modes:
 
 Both paths must produce identical schema-compliant outputs (`id`, `translation`).
 
+## Release Tags
+
+| Tag | Description |
+|-----|-------------|
+| v0.0.1-m00 | Kaggle-ready foundation; first valid submission pipeline |
+
 ## Related governance docs
 
 - RediAI v3 reference (posture): `docs/rediai33/rediai-v3.md`
