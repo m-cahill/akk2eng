@@ -86,7 +86,7 @@ Release tag: `v0.0.4-m01c` (Kaggle submission + non-zero leaderboard signal).
 
 The system has achieved:
 
-- Verified GPU execution (Blackwell / M01-A)
+- Verified GPU execution (Blackwell)
 - Full training + checkpoint pipeline (M01-B)
 - Deterministic inference (greedy, fixed seeds)
 - Valid Kaggle submission with fine-tuned baseline
