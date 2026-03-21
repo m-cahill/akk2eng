@@ -134,6 +134,7 @@ M02 is the **evaluation + targeted improvement loop**: measure, diagnose, change
 2. **Error analysis (M02 core):** group failures (names, numbers, OOV / rare signs, repetition, function words), count and rank buckets, and drive each sprint from the largest systematic gap — not from vibes or random tuning.
    - what is model getting wrong?
 3. **Lexicon injection (M06 early leverage):** when buckets point to lexical / entity errors, add a **small, auditable** gloss (high-confidence entries from team lexicon references, e.g. under `docs/kaggledocs/`) via prompt hints or a constrained post-pass — **M06** owns full lexicon integration; in M02 you only ship what the harness proves helps.
+   - huge upside in Akkadian
 4. **Normalization layer (M03 preview early):** add a dedicated, testable transliteration normalization stage (unicode, delimiters, common OA transliteration quirks) only where the harness shows a delta — **M03** will formalize the full engine; in M02 you ship the smallest layer that earns points.
    - clean transliterations
    - remove noise
