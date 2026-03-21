@@ -105,6 +105,8 @@ You achieved:
 
 > **Spec → System → Artifact → External Validation**
 
+That's the entire Moonshot loop (see `docs/moonshot.md`).
+
 This milestone establishes a fully operational Akkadian → English translation system.
 
 **Next milestone:** M02 — evaluation + targeted improvement loop (see `docs/akk2eng.md` roadmap).
