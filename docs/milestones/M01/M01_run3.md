@@ -133,10 +133,11 @@ M02 is the **evaluation + targeted improvement loop**: measure, diagnose, change
 1. **Eval harness first:** fixed dev split from `train.csv`, one primary metric (plus optional aux), save predictions every run so experiments are diffable.
 2. **Error analysis (M02 core):** group failures (names, numbers, OOV / rare signs, repetition, function words), count and rank buckets, and drive each sprint from the largest systematic gap — not from vibes or random tuning.
    - what is model getting wrong?
-3. **Normalization layer (M03 preview early):** add a dedicated, testable transliteration normalization stage (unicode, delimiters, common OA transliteration quirks) only where the harness shows a delta — **M03** will formalize the full engine; in M02 you ship the smallest layer that earns points.
+3. **Lexicon injection (M06 early leverage):** when buckets point to lexical / entity errors, add a **small, auditable** gloss (high-confidence entries from team lexicon references, e.g. under `docs/kaggledocs/`) via prompt hints or a constrained post-pass — **M06** owns full lexicon integration; in M02 you only ship what the harness proves helps.
+4. **Normalization layer (M03 preview early):** add a dedicated, testable transliteration normalization stage (unicode, delimiters, common OA transliteration quirks) only where the harness shows a delta — **M03** will formalize the full engine; in M02 you ship the smallest layer that earns points.
    - clean transliterations
    - remove noise
-4. **Cheap levers before heavy ones:** decoding / length controls, small glossaries for top entities, modest training nudges — each change re-run the harness before architecture jumps or long retrains.
-5. **Keep the M01 contract** (submission schema, deterministic inference defaults) until a milestone explicitly widens it.
+5. **Cheap levers before heavy ones:** decoding / length controls, modest training nudges — each change re-run the harness before architecture jumps or long retrains.
+6. **Keep the M01 contract** (submission schema, deterministic inference defaults) until a milestone explicitly widens it.
 
 Authority: `docs/akk2eng.md` (roadmap **M02**), `docs/moonshot.md` for north-star alignment.
