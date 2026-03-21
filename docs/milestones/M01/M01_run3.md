@@ -96,4 +96,8 @@ This milestone establishes a fully operational Akkadian → English translation 
 
 **Next milestone:** M02 — evaluation + targeted improvement loop (see `docs/akk2eng.md` roadmap).
 
-**Governance:** No further M01 scope without a new milestone charter; product work proceeds under M02+.
+## Closeout Rule
+
+- **M01 is closed** at tag `v0.0.4-m01c`. Do not extend M01 scope (A/B/C) without a **new milestone charter** and audit trail.
+- **Frozen artifacts:** treat `M01_run1.md`, `M01_run2.md`, and this file as the authority for M01; edit only to fix factual errors or cross-links, not to backfill new work into M01.
+- **Forward work** proceeds under **M02+** only (`docs/akk2eng.md` roadmap).
