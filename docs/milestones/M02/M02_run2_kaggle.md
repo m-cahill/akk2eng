@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|--------|
 | **Repo commit (local decode)** | `cb9cd8aaeca816202a4bcb6a5ab0fde875ca3f63` |
-| **Repo commit (Kaggle notebook aligned)** | `d47923f` *(or later; notebook must match decode table below)* |
+| **Repo commit (Kaggle notebook aligned)** | `f047f17` *(or later; notebook must match decode table below)* |
 | **Notebook** | `kaggle/akk2eng_m01_submission.ipynb` |
 | **Weights** | Same as M01-C: fine-tuned `outputs/m01_t5` exported to Kaggle (`MODEL_INPUT`) |
 
