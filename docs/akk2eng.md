@@ -54,7 +54,7 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 | ID | Summary | Status |
 |----|---------|--------|
 | **M00** | Kaggle-ready foundation + dummy pipeline + minimal CI + notebook stub + validated Kaggle submission | ✅ Complete (validated) |
-| **M01** | Baseline model + first non-zero Kaggle score | 🚧 In progress (see `docs/milestones/M01/M01_plan.md`) |
+| **M01** | Baseline model + first non-zero Kaggle score | ✅ Complete (see `docs/milestones/M01/M01_plan.md`, tag `v0.0.4-m01c`) |
 
 ## M01 scope (baseline model)
 
@@ -63,19 +63,19 @@ M01 introduces the first real translation logic:
 - HuggingFace seq2seq baseline: **`google-t5/t5-small`**, fine-tuned on `train.csv` **locally**
 - Deterministic inference (greedy / no sampling)
 - Minimal validation harness (`python -m akk2eng.pipeline.validate`)
-- Kaggle notebook upgraded to real inference: `kaggle/akk2eng_m01_submission.ipynb` (attach fine-tuned checkpoint as a separate input dataset)
+- Kaggle notebook: `kaggle/akk2eng_m01_submission.ipynb` (validated path patterns; as-run reference: `docs/akk2eng-m01c-submission.ipynb`)
 
 **Goal:** achieve the first non-zero leaderboard score while preserving the M00 submission and execution contract.
 
 ### M01 sub-phases (execution)
 
-**Active sub-phase:** **M01-C** (Kaggle inference + submit). **M01** overall remains in progress until leaderboard > 0 and exit criteria in `M01_plan.md` are met.
+**M01 closed** (`v0.0.4-m01c`). Active work continues at **M02** per roadmap.
 
 | Sub-phase | Status | Intent |
 |-----------|--------|--------|
-| **M01-A** | **Complete** (`v0.0.2-m01a`) | **Substrate verification** — evidence in `docs/milestones/M01/M01_run1.md`. |
-| **M01-B** | **Complete** (`v0.0.3-m01b`) | **Full local training** — GPU FP32 train, `outputs/m01_t5/`, `checkpoint_hash`, `pipeline.run` smoke; evidence in `docs/milestones/M01/M01_run2.md`. Plan: `docs/milestones/M01/M01B_plan.md`. |
-| **M01-C** | **In progress** | **Kaggle inference** — notebook + submission; first non-zero leaderboard signal. |
+| **M01-A** | **Complete** (`v0.0.2-m01a`) | **Substrate verification** — `docs/milestones/M01/M01_run1.md`. |
+| **M01-B** | **Complete** (`v0.0.3-m01b`) | **Full local training** — `docs/milestones/M01/M01_run2.md`, `M01B_plan.md`. |
+| **M01-C** | **Complete** (`v0.0.4-m01c`) | **Kaggle submit** — `docs/milestones/M01/M01_run3.md`; non-zero leaderboard signal. |
 
 Bring-up uses **conservative FP32** in the GPU probe path; full training can use `--fp32` when validating new hardware. **GPU training may be slightly non-deterministic** between runs; treat **inference with fixed weights** as the primary determinism contract (see Determinism policy).
 
@@ -124,9 +124,9 @@ M00 proved this dual path with a dummy model; M01 and later milestones keep the 
 | Milestone | Score |
 |-----------|--------|
 | M00 | 0.0 |
-| M01 | TBD — set after M01-C submit; run log: `docs/milestones/M01/M01_run3.md` |
+| M01 | Non-zero (baseline T5-small; exact public metric: optional paste from Kaggle UI) |
 
-After Kaggle returns a score, replace the M01 cell with the numeric value (and complete `M01_run3.md`).
+Run log: `docs/milestones/M01/M01_run3.md`.
 
 ## M00 validation (Kaggle)
 
@@ -162,6 +162,7 @@ Full CI rigor (coverage gates, security scanning, reproducibility enforcement) d
 | v0.0.1-m00 | Kaggle-ready foundation; first valid submission pipeline |
 | v0.0.2-m01a | GPU substrate validated (RTX 5090 / Blackwell, CUDA 12.8); M01-A closed |
 | v0.0.3-m01b | Baseline model trained (T5-small), checkpoint + hash + local inference verified; M01-B closed |
+| v0.0.4-m01c | Kaggle submission with fine-tuned baseline; non-zero leaderboard signal; M01 complete |
 
 ## Related governance docs
 

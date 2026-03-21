@@ -56,9 +56,9 @@ If paths are wrong, add a cell: `import os; print(os.listdir('/kaggle/input'))` 
 
 ## 5. Acceptance (M01-C)
 
-- [ ] Submission accepted by Kaggle (no format errors)
-- [ ] Leaderboard score recorded (target: first **non-zero** signal for M01)
-- [ ] Optional: note notebook runtime and whether inference was CPU-only (expected on Kaggle)
+- [x] Submission accepted by Kaggle (no format errors)
+- [x] Leaderboard: first **non-zero** signal (M01 exit criterion); optional: paste exact public metric into `docs/akk2eng.md`
+- [x] Notebook runtime: CPU inference on default Kaggle (expected); see `M01_run3.md`
 
 ---
 

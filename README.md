@@ -177,7 +177,9 @@ Use the self-contained notebook:
 
 - `kaggle/akk2eng_m01_submission.ipynb`
 
-**Step-by-step (M01-C):** `docs/milestones/M01/M01C_checklist.md` (zip `outputs/m01_t5/`, upload as a dataset, attach competition + model, set `INPUT_DIR` / `MODEL_INPUT`, run all cells, submit).
+**Step-by-step (M01-C):** `docs/milestones/M01/M01C_checklist.md` (zip `outputs/m01_t5/`, upload as a dataset or Models asset, set paths, run all cells, submit).
+
+**Validated path reference (as-run on Kaggle):** `docs/akk2eng-m01c-submission.ipynb`. Canonical template: `kaggle/akk2eng_m01_submission.ipynb` (set `MODEL_INPUT` to your mount).
 
 Add the notebook as a Kaggle Notebook, attach the **competition** dataset and (recommended) a **second dataset** with your fine-tuned folder so `MODEL_INPUT` resolves to a path containing `config.json`. Run all cells; output is `/kaggle/working/submission.csv`. Adjust `INPUT_DIR` / `MODEL_INPUT` if slug names differ.
 
@@ -197,6 +199,7 @@ pytest
 - M01 full training run log: `docs/milestones/M01/M01_run2.md`
 - M01-C Kaggle checklist: `docs/milestones/M01/M01C_checklist.md`
 - M01-C submission run log: `docs/milestones/M01/M01_run3.md`
+- M01-C validated notebook (paths as-run): `docs/akk2eng-m01c-submission.ipynb`
 
 ## License
 

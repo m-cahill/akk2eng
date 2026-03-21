@@ -3,13 +3,15 @@
 **Project:** akk2eng  
 **Milestone:** M01  
 **Phase:** Baseline modeling  
-**Status:** In progress (implementation)
+**Status:** ✅ Complete (`v0.0.4-m01c`)
 
 ### M01-A / M01-B / M01-C (execution split)
 
-- **M01-A — Substrate:** **Closed** (`v0.0.2-m01a`). Evidence: `docs/milestones/M01/M01_run1.md`. No further M01-A scope without a new audit.
-- **M01-B — Full train:** **Closed** (`v0.0.3-m01b`). Evidence: `docs/milestones/M01/M01_run2.md`. Plan: `M01B_plan.md`. **Frozen** — no further M01-B changes without a new audit.
-- **M01-C — Kaggle:** **Active.** Notebook inference + submission; leaderboard > 0.
+- **M01-A — Substrate:** **Closed** (`v0.0.2-m01a`). Evidence: `docs/milestones/M01/M01_run1.md`. **Frozen.**
+- **M01-B — Full train:** **Closed** (`v0.0.3-m01b`). Evidence: `docs/milestones/M01/M01_run2.md`. **Frozen.**
+- **M01-C — Kaggle:** **Closed** (`v0.0.4-m01c`). Evidence: `docs/milestones/M01/M01_run3.md`. **Frozen.**
+
+Canonical Kaggle notebook: `kaggle/akk2eng_m01_submission.ipynb`. Validated path reference: `docs/akk2eng-m01c-submission.ipynb`.
 
 ## Objective
 
@@ -141,7 +143,7 @@ Responsibilities:
 
 > **Leaderboard score > 0.0** (first non-zero signal)
 
-Then close M01 and proceed to M02 (evaluation + diagnostics).
+**Met** (M01-C). Proceed to **M02** (evaluation + diagnostics).
 
 ## Required updates to `docs/akk2eng.md`
 
