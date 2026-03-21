@@ -78,9 +78,11 @@ M01-C (Kaggle submission) — PASSED
 
 ---
 
-## Final closeout (M01)
+## Final Closeout
 
-M01 is officially complete (`v0.0.4-m01c`).
+M01 is officially complete.
+
+Release tag: `v0.0.4-m01c` (Kaggle submission + non-zero leaderboard signal).
 
 The system has achieved:
 
