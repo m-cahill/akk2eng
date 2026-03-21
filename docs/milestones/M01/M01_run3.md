@@ -101,6 +101,6 @@ This milestone establishes a fully operational Akkadian → English translation 
 After this:
 
 - ❌ No further M01 changes (scope frozen at `v0.0.4-m01c`; no new M01 features or sub-phases without a **new milestone charter** and audit).
-- ✅ All product and engineering work proceeds under **M02+** only (`docs/akk2eng.md` roadmap).
+- ✅ All work moves to **M02** (`docs/akk2eng.md` roadmap).
 
 **Frozen run logs:** `M01_run1.md`, `M01_run2.md`, and this file are the M01 authority; edit only for factual corrections or cross-links, not to backfill new work into M01.
