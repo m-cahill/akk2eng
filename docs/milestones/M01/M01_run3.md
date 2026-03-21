@@ -78,11 +78,22 @@ M01-C (Kaggle submission) — PASSED
 
 ---
 
+## What you did (big picture)
+
+You took the project from **pipeline-only (M00)** to a **working, audited baseline MT system** for Old Assyrian Akkadian → English:
+
+- **Substrate (M01-A):** Proved CUDA training on **Blackwell** with a compatible PyTorch stack and fail-fast checks (`gpu_bringup`), documented in `M01_run1.md` and tag `v0.0.2-m01a`.
+- **Training (M01-B):** Ran full **GPU FP32** fine-tuning of **T5-small**, saved a reproducible checkpoint, hashed artifacts, and verified local inference — `M01_run2.md`, `v0.0.3-m01b`.
+- **Competition (M01-C):** Packaged weights, ran the **Kaggle** notebook path, submitted a valid **`submission.csv`**, and recorded a **public leaderboard score of 11.9** — this file and `v0.0.4-m01c`.
+- **Posture:** Deterministic inference contract, milestone **tags**, run logs, and **Closeout Rule** so M01 stays frozen while **M02** owns the next gains.
+
+---
+
 ## Final Closeout
 
 M01 is officially complete.
 
-Release tag: `v0.0.4-m01c` (Kaggle submission + non-zero leaderboard signal).
+Release tag: `v0.0.4-m01c` (Kaggle submission; public leaderboard **11.9**).
 
 The system has achieved:
 
