@@ -16,3 +16,5 @@
 | 2026-03-21 | Write | M00 closeout: M00_summary.md, M00_audit.md | docs/milestones/M00/ | ✅ Complete |
 | 2026-03-21 | StrReplace | Update docs/akk2eng.md (validation, CI, execution contract) | docs/akk2eng.md | ✅ Complete |
 | 2026-03-21 | StrReplace | Update M01_plan.md for first non-zero score | docs/milestones/M01/M01_plan.md | ✅ Complete |
+| 2026-03-21 | StrReplace | Fix .gitignore /data/ /outputs/ (root only) | .gitignore | ✅ Complete |
+| 2026-03-21 | Shell | git commit + tag v0.0.1-m00 | — | ✅ Complete |
