@@ -15,8 +15,8 @@ MAX_INPUT_LENGTH = 512
 MAX_TARGET_LENGTH = 512
 MAX_NEW_TOKENS = 256
 
-# M02-C: greedy decoding — repetition control only (no beam; see M02_plan)
-DECODE_REPETITION_PENALTY = 1.2
+# M02-C / M02-C.2: greedy decoding — repetition control only (no beam; see M02_plan)
+DECODE_REPETITION_PENALTY = 1.1
 DECODE_NO_REPEAT_NGRAM_SIZE = 3
 
 DEFAULT_TRAIN_CSV = Path("data") / "train.csv"
