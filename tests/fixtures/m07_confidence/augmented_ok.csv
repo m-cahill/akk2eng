@@ -1,0 +1,7 @@
+sentence_id,oare_id,transliteration,translation,line_start,line_end,alignment_method,alignment_confidence,augmentation_type,augmentation_confidence,source_row_id
+st1,d1,a1 a2 a3 a4 a5,the one two three four,1,1,exact_count,1.0,direct_aid_strict,1.0,d1
+st2,d2,b1 b2 b3 b4 b5,five six seven eight,1,1,exact_count,1.0,direct_aid_strict,1.0,d2
+sw1,dw,w w w w w w w w w w,tok1 tok2 tok3 tok4 tok5,1,1,exact_count,1.0,expanded_english_resplit,0.5,dw
+sw2,dw2,x x x x x x x x x x,tok6 tok7 tok8 tok9 tok10,1,1,exact_count,1.0,expanded_english_resplit,0.5,dw2
+sh1,dh,y y y y y y y y y y,alpha beta gamma delta epsilon,1,1,exact_count,1.0,expanded_english_resplit,0.95,dh
+sh2,dh2,z z z z z z z z z z,zeta eta theta iota kappa,1,1,exact_count,1.0,expanded_english_resplit,0.95,dh2

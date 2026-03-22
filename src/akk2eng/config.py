@@ -71,3 +71,6 @@ DEFAULT_POLICY_A_TRAIN_CSV = _SEL / "strict_plus_highconf_cap50.csv"
 DEFAULT_POLICY_B_TRAIN_CSV = _SEL / "strict_plus_highconf_cap50_weighted2x.csv"
 DEFAULT_POLICY_A_REPORT_JSON = _SEL / "strict_plus_highconf_cap50_report.json"
 DEFAULT_POLICY_B_REPORT_JSON = _SEL / "strict_plus_highconf_cap50_weighted2x_report.json"
+
+# M07: confidence_v2 selection outputs (under data/; gitignored)
+DEFAULT_CONFIDENCE_OUTPUT_DIR = Path("data") / "derived" / "confidence"

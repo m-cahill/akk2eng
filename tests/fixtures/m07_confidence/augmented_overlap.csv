@@ -1,0 +1,5 @@
+sentence_id,oare_id,transliteration,translation,line_start,line_end,alignment_method,alignment_confidence,augmentation_type,augmentation_confidence,source_row_id
+st1,d1,a1 a2 a3 a4 a5,the one two three four,1,1,exact_count,1.0,direct_aid_strict,1.0,d1
+st2,d2,b1 b2 b3 b4 b5,five six seven eight,1,1,exact_count,1.0,direct_aid_strict,1.0,d2
+sx,dv-1,v v v v v v v v v v,overlap row four tok here,1,1,exact_count,1.0,expanded_english_resplit,0.99,dv
+sy,d-safe,s s s s s s s s s s,safe row one two three four,1,1,exact_count,1.0,expanded_english_resplit,0.98,ds

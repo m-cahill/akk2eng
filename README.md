@@ -183,6 +183,15 @@ python -m akk2eng.pipeline.select_train
 
 Writes `data/derived/selection/strict_plus_highconf_cap50*.csv` + JSON reports (gitignored). Local **3-run GPU** matrix: **`docs/milestones/M06/M06_local_gpu_execution.md`**.
 
+**M07 — confidence_v2 expansion selection (cap6 / cap10):**
+
+```bash
+# Requires split-safe augmented CSV, M06 Policy A baseline, and dev_split for overlap check
+python -m akk2eng.pipeline.select_confident_train
+```
+
+Writes `data/derived/confidence/scored_expansion_pool.csv`, `strict_plus_confv2_cap{6,10}.csv`, and JSON reports (gitignored). GPU matrix: **`docs/milestones/M07/M07_local_gpu_execution.md`**.
+
 Milestone-grade **3-epoch GPU** control + augmented train and dev eval (CUDA required): see **`docs/milestones/M05/M05_local_gpu_execution.md`**.
 
 **M04 — continue fine-tuning from `outputs/m01_t5`:**

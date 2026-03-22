@@ -1,0 +1,5 @@
+sentence_id,oare_id,transliteration,translation,line_start,line_end,alignment_method,alignment_confidence,augmentation_type,augmentation_confidence,source_row_id
+st1,d1,a a a a a,the one two three four,1,1,exact_count,1.0,direct_aid_strict,1.0,d1
+e1,dx,x x x x x x x x x x,keep first duplicate line here,1,1,exact_count,1.0,expanded_english_resplit,0.9,dx
+e2,dy,y y y y y y y y y y,keep  first  duplicate  line  here,1,1,exact_count,1.0,expanded_english_resplit,0.85,dy
+e3,dz,z z z z z z z z z z,unique text four tok here,1,1,exact_count,1.0,expanded_english_resplit,0.80,dz

@@ -60,7 +60,8 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 | **M04** | Sentence alignment | ✅ Complete (`M04_summary.md`, `M04_audit.md`; tag `v0.0.7-m04`) |
 | **M05** | Data augmentation | ✅ Complete (`M05_summary.md`, `M05_audit.md`; tag `v0.0.8-m05`) |
 | **M06** | Precision-preserving data expansion | ✅ Complete (`M06_summary.md`, `M06_audit.md`; tag `v0.0.9-m06`) |
-| **M07** | Confidence-driven expansion (seed) | 🚧 Next (`docs/milestones/M07/M07_plan.md`) |
+| **M07** | Confidence-driven expansion | ❌ Regression (`M07_summary.md`, `M07_audit.md`; tag `v0.0.10-m07`) |
+| **M08** | Alignment quality / new supervision (seed) | 🚧 Next (`docs/milestones/M08/M08_plan.md`) |
 
 ## M01 scope (baseline model)
 
@@ -75,7 +76,7 @@ M01 introduces the first real translation logic:
 
 ### M01 sub-phases (execution)
 
-**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). **M03 closed** (`v0.0.6-m03`). **M04 closed** (`v0.0.7-m04`). **M05 closed** (`v0.0.8-m05`). **M06 closed** (`v0.0.9-m06`). Active work continues at **M07** per roadmap.
+**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). **M03 closed** (`v0.0.6-m03`). **M04 closed** (`v0.0.7-m04`). **M05 closed** (`v0.0.8-m05`). **M06 closed** (`v0.0.9-m06`). **M07 closed** (`v0.0.10-m07`). Active work continues at **M08** per roadmap.
 
 | Sub-phase | Status | Intent |
 |-----------|--------|--------|
@@ -152,7 +153,7 @@ Submissions are only allowed when **dev chrF improves** over the previous best (
 
 **Conclusion:**  
 Normalization is validated as a **safe** transformation layer but is **not** a primary optimization lever.  
-Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); **M05** (data augmentation) is ✅ complete (`v0.0.8-m05`); **M06** (precision-preserving expansion) is ✅ complete (`v0.0.9-m06`); next roadmap focus is **M07** (confidence-driven expansion — seed).
+Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); **M05** (data augmentation) is ✅ complete (`v0.0.8-m05`); **M06** (precision-preserving expansion) is ✅ complete (`v0.0.9-m06`); **M07** (confidence-driven expansion) is ✅ closed (`v0.0.10-m07`, regression documented); next roadmap focus is **M08** (alignment quality / new supervision).
 
 ## M04 scope (sentence alignment)
 
@@ -184,7 +185,7 @@ Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); *
 - **Thesis:** aligns with `docs/moonshot.md` — **fixing data structure** (sentence alignment) yields measurable gain without model swap.
 
 **Conclusion:**  
-M04 complete. **M05** and **M06** are closed — see `docs/milestones/M05/M05_summary.md`, `docs/milestones/M06/M06_summary.md`. Active next: **M07** — `docs/milestones/M07/M07_plan.md`.
+M04 complete. **M05**, **M06**, and **M07** are closed — see milestone summaries under `docs/milestones/`. Active next: **M08** — `docs/milestones/M08/M08_plan.md`.
 
 ## M05 scope (data augmentation / alignment expansion)
 
@@ -241,7 +242,31 @@ even via weighting, degrades performance.
 ```
 
 **Conclusion:**  
-M06 complete. **M07** targets confidence-driven expansion (more high-confidence rows, better scoring — not blind volume) — `docs/milestones/M07/M07_plan.md`.
+M06 complete. **M07** tested confidence-driven expansion beyond the M06 optimum — **closed as regression** (`v0.0.10-m07`); see `docs/milestones/M07/M07_summary.md`.
+
+## M07 scope (confidence-driven expansion)
+
+**Closed** (`v0.0.10-m07`). Deterministic **`confidence_v2`** rescoring and tiny-cap selection (`python -m akk2eng.pipeline.select_confident_train`) on the split-safe M05 augmented CSV, with M06 Policy A baseline as winner lock and dev overlap fail-closed. **Closeout:** `docs/milestones/M07/M07_summary.md`, `docs/milestones/M07/M07_audit.md`.
+
+### Pipeline
+
+- **Engine:** `src/akk2eng/data/confidence.py` — locked score components, hard exclusions, duplicate translation handling, tie-breaks; JSON reports + SHA-256.
+- **CLI:** `python -m akk2eng.pipeline.select_confident_train` → `data/derived/confidence/scored_expansion_pool.csv`, `strict_plus_confv2_cap6.csv`, `strict_plus_confv2_cap10.csv` (+ reports), gitignored.
+- **Training:** locked 3-run matrix vs M06 Policy A baseline rerun; continuation from `outputs/m01_t5`, 3 epochs, `--fp32` (see `M07_local_gpu_execution.md`).
+
+### M07 Closeout (GPU, frozen dev)
+
+- **Baseline (M06 winner CSV):** **52.2530** chrF (same-run rerun).
+- **Cap6 / Cap10:** **45.4786** / **45.6232** chrF — **~−6.6 chrF** vs baseline (best candidate cap10: **−6.6298**).
+- **Decision:** **M07 regression** — additional expansion reintroduces noise; **no** Kaggle submission.
+- **Conclusion:** expansion **beyond** the M06 optimum **fails** even under improved deterministic scoring; the regime is **narrow and non-expandable** via selection alone.
+
+```text
+The M06 optimum is extremely narrow and fragile; additional expansion reintroduces noise even under improved scoring.
+```
+
+**Conclusion:**  
+M07 complete (negative result). **M08** targets **alignment quality** and **new high-confidence supervision** — not further scoring tweaks on the same pool — `docs/milestones/M08/M08_plan.md`.
 
 ## Planned milestone roadmap
 
@@ -253,8 +278,8 @@ M06 complete. **M07** targets confidence-driven expansion (more high-confidence 
 | M04 | Sentence alignment (✅ closed) |
 | M05 | Data augmentation (✅ closed) |
 | M06 | Precision-preserving data expansion (✅ closed) |
-| M07 | Confidence-driven expansion — seed (`M07_plan.md`; lexicon roadmap shifted) |
-| M08 | Named entity handling |
+| M07 | Confidence-driven expansion (✅ closed — regression; see `M07_summary.md`) |
+| M08 | Alignment quality / new supervision (🚧 seed — **not** more pool expansion) |
 | M09 | Rule-based improvements |
 | M10 | Model upgrade |
 | M11 | Training stabilization |
@@ -283,6 +308,7 @@ Documented **negative results** and **positive controls** are part of the system
 | **M03 v1** | Aggressive normalization (NFKC + lowercase) | Train/inference mismatch → **dev regression**; conservative **v2** restored parity |
 | **M05** | Unweighted mix of strict + **partial-prefix** expansion (~296 rows) | **Label noise** diluted supervision → **~−25 chrF** vs same-run control |
 | **M06 Policy B** | 2× strict duplication + same **2** expansion rows as Policy A | **~25 chrF** vs **52.25** (Policy A) — **mixture / weighting** can collapse gains |
+| **M07** | `confidence_v2` cap6/cap10 (236 strict + 6/10 expansion) vs M06 Policy A baseline | **~−6.6 chrF** — **narrow optimum**; more expansion from same pool **reintroduces noise** even with better scoring |
 
 ### M06 governance bullets (new)
 
@@ -290,6 +316,14 @@ Documented **negative results** and **positive controls** are part of the system
 - Expansion is only beneficial under extreme precision gating
 - Even tiny amounts of high-confidence data can outperform large noisy datasets
 - Weighting strategies can reintroduce noise and cause collapse
+```
+
+### M07 governance bullets (new)
+
+```text
+- The M06 optimum is extremely narrow and cannot be expanded via confidence scoring
+- Even small additions of expansion data can reintroduce noise and degrade performance
+- Confidence scoring alone is insufficient to identify additional high-quality rows
 ```
 
 ### Data quality hierarchy (informal)
@@ -366,6 +400,7 @@ Full CI rigor (coverage gates, security scanning, reproducibility enforcement) d
 | v0.0.7-m04 | M04 complete — sentence alignment implemented, leakage fixed, **+3.48 chrF** validated (split-safe) |
 | v0.0.8-m05 | M05 complete — alignment expansion implemented; **regression** vs same-run control (~**−25 chrF**); precision > recall |
 | v0.0.9-m06 | M06 complete — precision-preserving gated expansion; Policy A **+6.89 chrF** vs same-run control; Policy B mixture failure documented |
+| v0.0.10-m07 | M07 complete — confidence-driven expansion fails; additional rows degrade performance; confirms M06 optimum is narrow and non-expandable |
 
 ## Related governance docs
 

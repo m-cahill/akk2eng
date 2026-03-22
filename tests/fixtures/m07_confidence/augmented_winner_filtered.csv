@@ -1,0 +1,5 @@
+sentence_id,oare_id,transliteration,translation,line_start,line_end,alignment_method,alignment_confidence,augmentation_type,augmentation_confidence,source_row_id
+st1,d1,a1 a2 a3 a4 a5,the one two three four,1,1,exact_count,1.0,direct_aid_strict,1.0,d1
+st2,d2,b1 b2 b3 b4 b5,five six seven eight,1,1,exact_count,1.0,direct_aid_strict,1.0,d2
+swbad,db,x x x x x x x x x x,one two three,1,1,exact_count,1.0,expanded_english_resplit,0.99,db
+swgood,dg,g g g g g g g g g g,one two three four five,1,1,exact_count,1.0,expanded_english_resplit,0.99,dg
