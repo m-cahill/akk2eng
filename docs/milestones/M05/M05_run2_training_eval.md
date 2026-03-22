@@ -15,6 +15,8 @@
 
 **Milestone-grade chrF must come from your machine** (e.g. RTX 5090 / cu128). Do **not** use long CPU training as the comparison surface.
 
+**Copy/paste runbook:** [M05_local_gpu_execution.md](M05_local_gpu_execution.md)
+
 ---
 
 ## Step 1 — Control training (GPU, run first)

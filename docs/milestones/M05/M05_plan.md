@@ -157,3 +157,4 @@ python -m akk2eng.pipeline.train \
 * Project SoT: [../../akk2eng.md](../../akk2eng.md)
 * M04 closeout: [../M04/M04_summary.md](../M04/M04_summary.md)
 * Tool log: [M05_toolcalls.md](M05_toolcalls.md)
+* Local GPU execution (final M05 step): [M05_local_gpu_execution.md](M05_local_gpu_execution.md)
