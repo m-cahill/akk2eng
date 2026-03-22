@@ -43,3 +43,7 @@ DEFAULT_ANALYSIS_OUTPUT_DIR = Path("outputs") / "analysis"
 USE_LEXICON = True
 DEFAULT_LEXICON_CSV = Path("docs") / "kaggledocs" / "OA_Lexicon_eBL.csv"
 LEXICON_MAX_ENTRIES = 400
+
+# M03: inference-time transliteration cleanup (see ``akk2eng.data.normalize``).
+USE_NORMALIZATION = True
+NORMALIZATION_VERSION = "v2"

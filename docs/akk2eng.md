@@ -56,7 +56,8 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 | **M00** | Kaggle-ready foundation + dummy pipeline + minimal CI + notebook stub + validated Kaggle submission | ✅ Complete (validated) |
 | **M01** | Baseline model + first non-zero Kaggle score | ✅ Complete (`M01_plan.md`, `M01_audit.md`, `M01_summary.md`; tag `v0.0.4-m01c`) |
 | **M02** | Evaluation + targeted improvement loop | ✅ Complete (`M02_summary.md`, `M02_audit.md`; tag `v0.0.5-m02`) |
-| **M03** | Normalization engine | 🚧 Next (`docs/milestones/M03/M03_plan.md`) |
+| **M03** | Normalization engine | ✅ Complete (`M03_summary.md`, `M03_audit.md`; tag `v0.0.6-m03`) |
+| **M04** | Sentence alignment | 🚧 Next (`docs/milestones/M04/M04_plan.md`) |
 
 ## M01 scope (baseline model)
 
@@ -71,7 +72,7 @@ M01 introduces the first real translation logic:
 
 ### M01 sub-phases (execution)
 
-**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). Active work continues at **M03** per roadmap.
+**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). **M03 closed** (`v0.0.6-m03`). Active work continues at **M04** per roadmap.
 
 | Sub-phase | Status | Intent |
 |-----------|--------|--------|
@@ -131,14 +132,33 @@ Submissions are only allowed when **dev chrF improves** over the previous best (
 
 **M02 outcome:** dev harness and decoding experiments delivered large **chrF** improvements locally; public LB remained in the **~11.6–11.9** band — **M03** targets normalization and data quality to break the plateau. *(Original stretch exit — scripted dev metric + Kaggle **> 11.9** — carries forward as **M03 exit** alongside dev chrF.)*
 
+## M03 scope (normalization engine)
+
+**Closed** (`v0.0.6-m03`). Inference-time transliteration cleanup in `akk2eng.data.normalize.normalize_transliteration()`, integrated only in `run_inference()`. **Closeout:** `docs/milestones/M03/M03_summary.md`, `docs/milestones/M03/M03_audit.md`.
+
+- **v1:** NFKC + lowercase → dev **chrF regression** vs norm-off (train/inference mismatch); documented in `docs/milestones/M03/M03_run1_normalization.md`.
+- **v2:** noise + whitespace + duplicate collapse only → **metric parity** vs `--no-normalization` on frozen dev (chrF **~39.86**, beam=3); `docs/milestones/M03/M03_run2_conservative_norm.md`.
+- **Config:** `USE_NORMALIZATION`, `NORMALIZATION_VERSION` (`v2`); CLI `--no-normalization` on `pipeline.eval` / `pipeline.run`.
+
+### M03 Closeout
+
+- Normalization engine implemented and integrated at inference-time.
+- **v1** (aggressive) caused performance regression due to train/inference mismatch.
+- **v2** (conservative) restored distribution alignment and produced **identical** dev metrics and error buckets vs baseline (norm off).
+- No measurable improvement in dev chrF from normalization alone; **no** Kaggle submission in M03 (discipline: no dev gain).
+
+**Conclusion:**  
+Normalization is validated as a **safe** transformation layer but is **not** a primary optimization lever.  
+Next gains require structural improvements to data alignment (**M04**).
+
 ## Planned milestone roadmap
 
 | ID | Focus |
 |----|--------|
 | M01 | Baseline model (first score) |
 | M02 | Evaluation + targeted improvement loop (✅ closed) |
-| M03 | Normalization engine (🚧 next) |
-| M04 | Sentence alignment |
+| M03 | Normalization engine (✅ closed) |
+| M04 | Sentence alignment (🚧 next) |
 | M05 | Data augmentation |
 | M06 | Lexicon integration |
 | M07 | Named entity handling |
@@ -213,6 +233,7 @@ Full CI rigor (coverage gates, security scanning, reproducibility enforcement) d
 | v0.0.3-m01b | Baseline model trained (T5-small), checkpoint + hash + local inference verified; M01-B closed |
 | v0.0.4-m01c | Kaggle submission with fine-tuned baseline; public leaderboard 11.9; M01 complete |
 | v0.0.5-m02 | M02 complete — evaluation harness, error analysis, decoding optimization, lexicon validation |
+| v0.0.6-m03 | M03 complete — normalization engine implemented, validated, stabilized (`NORMALIZATION_VERSION=v2`) |
 
 ## Related governance docs
 

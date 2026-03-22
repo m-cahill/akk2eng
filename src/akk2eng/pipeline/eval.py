@@ -27,8 +27,10 @@ from akk2eng.config import (
     DEV_FRACTION,
     LEXICON_MAX_ENTRIES,
     MAX_NEW_TOKENS,
+    NORMALIZATION_VERSION,
     SEED,
     USE_LEXICON,
+    USE_NORMALIZATION,
 )
 from akk2eng.data.loader import load_csv
 from akk2eng.data.schema import COL_TRANSLATION, COL_TRANSLITERATION
@@ -66,6 +68,7 @@ def run_eval(
     force_splits: bool,
     quiet: bool,
     use_lexicon: bool | None = None,
+    use_normalization: bool | None = None,
     lexicon_csv: Path | None = None,
     lexicon_train_csv: Path | None = None,
     lexicon_max_entries: int | None = None,
@@ -86,6 +89,7 @@ def run_eval(
         raise ValueError(msg)
 
     do_lex = USE_LEXICON if use_lexicon is None else use_lexicon
+    do_norm = USE_NORMALIZATION if use_normalization is None else use_normalization
     lcsv = DEFAULT_LEXICON_CSV if lexicon_csv is None else lexicon_csv
     ltrain = train_csv if lexicon_train_csv is None else lexicon_train_csv
     lcap = LEXICON_MAX_ENTRIES if lexicon_max_entries is None else lexicon_max_entries
@@ -96,6 +100,7 @@ def run_eval(
         batch_size=batch_size,
         quiet=quiet,
         use_lexicon=do_lex,
+        use_normalization=do_norm,
         train_csv=ltrain,
         lexicon_csv=lcsv,
         lexicon_max_entries=lcap,
@@ -135,6 +140,10 @@ def run_eval(
         "max_entries": int(lcap) if do_lex else None,
         "n_entries": n_lex,
     }
+    normalization_cfg = {
+        "enabled": bool(do_norm),
+        "version": NORMALIZATION_VERSION,
+    }
     metrics_blob = {
         **metrics,
         "primary_metric": "chrf",
@@ -148,6 +157,7 @@ def run_eval(
         "model_dir": str(Path(model_dir).resolve()) if model_dir else None,
         "decoding": decoding,
         "lexicon": lexicon_cfg,
+        "normalization": normalization_cfg,
     }
     metrics_path.write_text(json.dumps(metrics_blob, indent=2) + "\n", encoding="utf-8")
 
@@ -167,6 +177,9 @@ def run_eval(
         (
             f"lexicon: use_lexicon={do_lex}, n_entries={n_lex}, "
             f"max_entries={lcap if do_lex else 'n/a'}"
+        ),
+        (
+            f"normalization: enabled={do_norm}, version={NORMALIZATION_VERSION}"
         ),
         f"predictions: {pred_path}",
         f"metrics: {metrics_path}",
@@ -197,9 +210,12 @@ def run_eval(
         "sacrebleu_version": metrics["sacrebleu_version"],
         "decoding": decoding,
         "lexicon": lexicon_cfg,
+        "normalization": normalization_cfg,
         "USE_LEXICON": USE_LEXICON,
         "DEFAULT_LEXICON_CSV": str(Path(DEFAULT_LEXICON_CSV).resolve()),
         "LEXICON_MAX_ENTRIES": LEXICON_MAX_ENTRIES,
+        "USE_NORMALIZATION": USE_NORMALIZATION,
+        "NORMALIZATION_VERSION": NORMALIZATION_VERSION,
     }
     (exp_dir / "config.json").write_text(
         json.dumps(config_blob, indent=2) + "\n",
@@ -210,7 +226,7 @@ def run_eval(
     notes_path = exp_dir / "notes.txt"
     if not notes_path.is_file():
         notes_path.write_text(
-            "M02 experiment snapshot (auto). Add hypothesis and outcome here.\n",
+            "Experiment snapshot (auto). Add hypothesis and outcome here.\n",
             encoding="utf-8",
         )
 
@@ -285,6 +301,11 @@ def main() -> None:
         help="Disable M02-D lexicon post-processing on predictions",
     )
     parser.add_argument(
+        "--no-normalization",
+        action="store_true",
+        help="Disable M03 transliteration normalization before tokenization",
+    )
+    parser.add_argument(
         "--lexicon-csv",
         type=Path,
         default=None,
@@ -322,6 +343,7 @@ def main() -> None:
         force_splits=args.force_splits,
         quiet=args.quiet,
         use_lexicon=False if args.no_lexicon else None,
+        use_normalization=False if args.no_normalization else None,
         lexicon_csv=args.lexicon_csv,
         lexicon_train_csv=args.lexicon_train_csv,
         lexicon_max_entries=args.lexicon_max_entries,

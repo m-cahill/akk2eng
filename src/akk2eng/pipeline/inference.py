@@ -13,7 +13,9 @@ from akk2eng.config import (
     DEFAULT_TRAIN_CSV,
     LEXICON_MAX_ENTRIES,
     USE_LEXICON,
+    USE_NORMALIZATION,
 )
+from akk2eng.data.normalize import normalize_transliteration
 from akk2eng.data.schema import COL_TRANSLITERATION
 from akk2eng.lexicon.postprocess import apply_lexicon_postprocess, build_lexicon_pairs
 from akk2eng.model.model import T5BaselineTranslator
@@ -54,6 +56,7 @@ def run_inference(
     quiet: bool = False,
     debug_sample_n: int = 8,
     use_lexicon: bool | None = None,
+    use_normalization: bool | None = None,
     train_csv: Path | None = None,
     lexicon_csv: Path | None = None,
     lexicon_max_entries: int | None = None,
@@ -66,6 +69,9 @@ def run_inference(
     mdir = DEFAULT_MODEL_DIR if model_dir is None else model_dir
     translator = T5BaselineTranslator(model_dir=mdir)
     texts = df[COL_TRANSLITERATION].fillna("").astype(str).tolist()
+    do_norm = USE_NORMALIZATION if use_normalization is None else use_normalization
+    if do_norm:
+        texts = [normalize_transliteration(t) for t in texts]
     preds, tok_lens = translator.translate(texts, batch_size=batch_size)
 
     do_lex = USE_LEXICON if use_lexicon is None else use_lexicon

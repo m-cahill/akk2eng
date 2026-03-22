@@ -29,6 +29,7 @@ def run_pipeline(
     batch_size: int = 8,
     quiet: bool = False,
     use_lexicon: bool | None = None,
+    use_normalization: bool | None = None,
     train_csv: Path | None = None,
     lexicon_csv: Path | None = None,
     lexicon_max_entries: int | None = None,
@@ -44,6 +45,7 @@ def run_pipeline(
         batch_size=batch_size,
         quiet=quiet,
         use_lexicon=use_lexicon,
+        use_normalization=use_normalization,
         train_csv=DEFAULT_TRAIN_CSV if train_csv is None else train_csv,
         lexicon_csv=lexicon_csv,
         lexicon_max_entries=lexicon_max_entries,
@@ -82,6 +84,11 @@ def main() -> None:
         help="Disable M02-D lexicon post-processing on predictions",
     )
     parser.add_argument(
+        "--no-normalization",
+        action="store_true",
+        help="Disable M03 transliteration normalization before tokenization",
+    )
+    parser.add_argument(
         "--train-csv",
         type=Path,
         default=DEFAULT_TRAIN_CSV,
@@ -107,6 +114,7 @@ def main() -> None:
         batch_size=args.batch_size,
         quiet=args.quiet,
         use_lexicon=False if args.no_lexicon else USE_LEXICON,
+        use_normalization=False if args.no_normalization else None,
         train_csv=args.train_csv,
         lexicon_csv=args.lexicon_csv,
         lexicon_max_entries=args.lexicon_max_entries,
