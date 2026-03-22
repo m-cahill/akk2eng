@@ -7,7 +7,7 @@
 
 | Field | Value |
 |-------|--------|
-| Config commit | `ba11195` (`DECODE_REPETITION_PENALTY = 1.1`) |
+| Config commit | `4a74ce2` (`DECODE_REPETITION_PENALTY = 1.1`) |
 | Splits | **Not** regenerated (`--force-splits` not used) |
 | Weights | `outputs/m01_t5` (unchanged) |
 
