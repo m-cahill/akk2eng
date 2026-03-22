@@ -207,24 +207,24 @@ Generated locally only, not committed:
 * Same inference/eval path unless a winning model replaces the checkpoint.
 * Alignment is the primary changed variable.
 
-### Bounded experiment matrix
+### Experiment matrix (Phase D — locked)
 
-Run in this order:
+Run **both** experiments (alignment coverage is sparse; aligned-only is high regression risk):
 
-**Experiment 1 — sentence-aligned continuation**
+**Experiment 1 — sentence-aligned continuation (isolated signal)**
 
 * Start from the current M01/M03 working checkpoint.
-* Continue fine-tuning on the sentence-aligned pairs only.
+* Continue fine-tuning on **sentence-aligned pairs only** (`aligned_train_sentences.csv`).
 * Evaluate on the frozen dev split with the current repo-default eval path.
+* **Expectation:** often worse or unstable vs baseline (small effective dataset).
 
-**Experiment 2 — fallback mixed/curriculum run**
+**Experiment 2 — mixed corpus (co-primary; required)**
 
-* Run only if Experiment 1 is clearly worse or inconclusive.
-* Use one bounded fallback only:
+* Concatenate **full** `train.csv` **then** `aligned_train_sentences.csv` → `mixed_train.csv` (see `python -m akk2eng.pipeline.mix_train`).
+* Same continuation checkpoint and training hyperparameters as Exp 1 unless a deliberate A/B is documented.
+* **This is the primary comparison** for M04 success (alignment as signal injection, not replacement).
 
-  * either mixed corpus training (document + aligned sentence pairs),
-  * or document-to-sentence curriculum fine-tune.
-* Do not expand beyond one fallback in M04.
+**Optional (out of default matrix):** document-to-sentence curriculum or upsampling aligned rows (e.g. 2–3×) — only if documented in run notes; not required for M04 closeout.
 
 ### Required artifacts for each experiment
 

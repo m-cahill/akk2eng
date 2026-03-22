@@ -159,16 +159,35 @@ python -m akk2eng.pipeline.align
 
 # Phase A data audit only → outputs/alignment/baseline_alignment_audit.json
 python -m akk2eng.pipeline.align --audit-only
+
+# Mixed corpus: full train.csv + aligned rows → data/derived/alignment/mixed_train.csv
+python -m akk2eng.pipeline.mix_train
 ```
 
-**M04 — continue fine-tuning from `outputs/m01_t5` on aligned rows:**
+**M04 — continue fine-tuning from `outputs/m01_t5`:**
 
 ```bash
+# Experiment 1 — aligned sentence pairs only (~262 rows typical)
 python -m akk2eng.pipeline.train \
   --train-csv data/derived/alignment/aligned_train_sentences.csv \
   --resume-model-dir outputs/m01_t5 \
   --output-dir outputs/m04_t5_aligned \
   --device cuda --fp32
+
+# Experiment 2 — mixed (document + aligned); co-primary with Exp 1 for M04
+python -m akk2eng.pipeline.train \
+  --train-csv data/derived/alignment/mixed_train.csv \
+  --resume-model-dir outputs/m01_t5 \
+  --output-dir outputs/m04_t5_mixed \
+  --device cuda --fp32
+```
+
+**Multi-file training CSV (concatenate in order):**
+
+```bash
+python -m akk2eng.pipeline.train \
+  --train-csv data/part_a.csv --train-csv data/part_b.csv \
+  --resume-model-dir outputs/m01_t5 --output-dir outputs/custom_run
 ```
 
 **Checkpoint hash manifest** (repeat runs / audit):

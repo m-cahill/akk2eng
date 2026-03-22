@@ -46,6 +46,15 @@ Command: `python -m akk2eng.pipeline.align`
 
 **Determinism:** running the builder twice on the same inputs reproduces the same `aligned_csv_sha256` (verified).
 
+## Mixed corpus (Phase D)
+
+**CLI:** `python -m akk2eng.pipeline.mix_train`  
+**Output:** `data/derived/alignment/mixed_train.csv` + `mixed_train_stats.json` (see [M04_run3_training_eval.md](M04_run3_training_eval.md)).
+
+**Multi-CSV training (equivalent concat):**  
+`python -m akk2eng.pipeline.train --train-csv A.csv --train-csv B.csv ...`
+
 ## Tests
 
-`pytest tests/test_m04_alignment.py` — line parsing, ordering, exact/merge/split pairing, skips, stable IDs + hashes on fixtures.
+`pytest tests/test_m04_alignment.py` — line parsing, ordering, exact/merge/split pairing, skips, stable IDs + hashes on fixtures.  
+`pytest tests/test_m04_mixed_train.py` — mixed CSV builder + concat loader.

@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
+import pandas as pd
 import torch
 from transformers import (
     AutoModelForSeq2SeqLM,
@@ -27,6 +30,33 @@ from akk2eng.data.loader import load_csv
 from akk2eng.data.schema import COL_TRANSLATION, COL_TRANSLITERATION
 from akk2eng.model.model import set_deterministic_seeds
 from akk2eng.model.tokenizer import load_tokenizer
+
+
+def _load_concat_train_dataframes(paths: Sequence[Path]) -> tuple[pd.DataFrame, dict[str, Any]]:
+    """Load one or more train CSVs and concatenate (document order preserved per file)."""
+    path_list = list(paths)
+    if not path_list:
+        msg = "at least one --train-csv path is required"
+        raise ValueError(msg)
+    frames: list[pd.DataFrame] = []
+    sources: list[dict[str, Any]] = []
+    for p in path_list:
+        df = load_csv(p)
+        for col in (COL_TRANSLITERATION, COL_TRANSLATION):
+            if col not in df.columns:
+                msg = f"{p} must contain column {col!r}"
+                raise ValueError(msg)
+        df = df.dropna(subset=[COL_TRANSLITERATION, COL_TRANSLATION])
+        df = df.astype({COL_TRANSLITERATION: str, COL_TRANSLATION: str})
+        frames.append(df)
+        sources.append({"path": str(p.resolve()), "n_rows": len(df)})
+    full = frames[0] if len(frames) == 1 else pd.concat(frames, ignore_index=True)
+    meta: dict[str, Any] = {
+        "n_sources": len(path_list),
+        "sources": sources,
+        "total_rows_after_dropna": len(full),
+    }
+    return full.reset_index(drop=True), meta
 
 
 def _preprocess_batch(examples: dict, tokenizer, prefix: str) -> dict:
@@ -80,7 +110,7 @@ def _resolve_device(device: str) -> tuple[str, bool]:
 
 
 def train(
-    train_csv: Path,
+    train_csv: Path | Sequence[Path],
     output_dir: Path,
     *,
     resume_model_dir: Path | None = None,
@@ -102,13 +132,9 @@ def train(
     model_source: Path | str = resume_model_dir if resume_model_dir is not None else BASE_MODEL_ID
     print("Loading model/tokenizer from:", model_source)
 
-    df = load_csv(train_csv)
-    for col in (COL_TRANSLITERATION, COL_TRANSLATION):
-        if col not in df.columns:
-            msg = f"train CSV must contain column {col!r}"
-            raise ValueError(msg)
-    df = df.dropna(subset=[COL_TRANSLITERATION, COL_TRANSLATION])
-    df = df.astype({COL_TRANSLITERATION: str, COL_TRANSLATION: str})
+    paths = [train_csv] if isinstance(train_csv, Path) else list(train_csv)
+    df, train_meta = _load_concat_train_dataframes(paths)
+    print("Train CSV composition:", train_meta)
     if max_samples is not None:
         if max_samples < 1:
             msg = "--max-samples must be >= 1"
@@ -192,8 +218,21 @@ def main() -> None:
     parser.add_argument(
         "--train-csv",
         type=Path,
-        default=DEFAULT_TRAIN_CSV,
-        help=f"Path to train.csv (default: {DEFAULT_TRAIN_CSV})",
+        action="append",
+        dest="train_csvs",
+        default=None,
+        metavar="PATH",
+        help=(
+            "Training CSV (repeat to concatenate multiple files in order; "
+            f"default: {DEFAULT_TRAIN_CSV})"
+        ),
+    )
+    parser.add_argument(
+        "--resume-model-dir",
+        type=Path,
+        default=None,
+        help="Load weights/tokenizer from this directory (M04 continuation fine-tune); "
+        "default: train from HuggingFace BASE_MODEL_ID only",
     )
     parser.add_argument(
         "--output-dir",
@@ -229,8 +268,11 @@ def main() -> None:
         help="Trainer logging interval (lower for short smoke runs)",
     )
     args = parser.parse_args()
+    train_paths: list[Path] = (
+        args.train_csvs if args.train_csvs is not None else [DEFAULT_TRAIN_CSV]
+    )
     train(
-        args.train_csv,
+        train_paths,
         args.output_dir,
         resume_model_dir=args.resume_model_dir,
         epochs=args.epochs,
