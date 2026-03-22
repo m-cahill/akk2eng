@@ -79,4 +79,4 @@ Dev success-candidate rules satisfied for **Policy A**; submission authorized un
 
 ## Handoff
 
-**Next milestone:** M07 — confidence-driven expansion (seed): [../M07/M07_plan.md](../M07/M07_plan.md). **Do not** increase volume blindly; prioritize discovering additional **high-confidence** rows and improving **confidence scoring** fidelity.
+**Follow-on:** M07 — confidence-driven expansion — **closed** (`v0.0.10-m07`, regression documented): [../M07/M07_summary.md](../M07/M07_summary.md). **Current next:** M08 — alignment quality / new supervision (seed): [../M08/M08_plan.md](../M08/M08_plan.md).
