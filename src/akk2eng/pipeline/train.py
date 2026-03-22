@@ -83,6 +83,7 @@ def train(
     train_csv: Path,
     output_dir: Path,
     *,
+    resume_model_dir: Path | None = None,
     epochs: float = 3.0,
     batch_size: int = 4,
     learning_rate: float = 3e-4,
@@ -94,6 +95,12 @@ def train(
     set_deterministic_seeds()
     label, use_cpu = _resolve_device(device)
     print("Training device mode:", device, "-> resolved:", label, "| Trainer use_cpu:", use_cpu)
+
+    if resume_model_dir is not None and not resume_model_dir.is_dir():
+        msg = f"--resume-model-dir is not a directory: {resume_model_dir}"
+        raise FileNotFoundError(msg)
+    model_source: Path | str = resume_model_dir if resume_model_dir is not None else BASE_MODEL_ID
+    print("Loading model/tokenizer from:", model_source)
 
     df = load_csv(train_csv)
     for col in (COL_TRANSLITERATION, COL_TRANSLATION):
@@ -112,13 +119,13 @@ def train(
     from datasets import Dataset
 
     ds = Dataset.from_pandas(df[[COL_TRANSLITERATION, COL_TRANSLATION]].reset_index(drop=True))
-    tokenizer = load_tokenizer(BASE_MODEL_ID)
+    tokenizer = load_tokenizer(model_source)
 
     dtype_kw = {}
     if fp32:
         dtype_kw["torch_dtype"] = torch.float32
 
-    model = AutoModelForSeq2SeqLM.from_pretrained(BASE_MODEL_ID, **dtype_kw)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_source, **dtype_kw)
     if fp32:
         model = model.to(dtype=torch.float32)
     if not use_cpu:
@@ -225,6 +232,7 @@ def main() -> None:
     train(
         args.train_csv,
         args.output_dir,
+        resume_model_dir=args.resume_model_dir,
         epochs=args.epochs,
         batch_size=args.batch_size,
         learning_rate=args.learning_rate,

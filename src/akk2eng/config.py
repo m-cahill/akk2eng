@@ -47,3 +47,9 @@ LEXICON_MAX_ENTRIES = 400
 # M03: inference-time transliteration cleanup (see ``akk2eng.data.normalize``).
 USE_NORMALIZATION = True
 NORMALIZATION_VERSION = "v2"
+
+# M04: sentence alignment outputs (under ``data/``; gitignored like other competition paths).
+DEFAULT_SENTENCES_AID_CSV = Path("data") / "Sentences_Oare_FirstWord_LinNum.csv"
+DEFAULT_ALIGNMENT_OUTPUT_DIR = Path("data") / "derived" / "alignment"
+DEFAULT_ALIGNED_TRAIN_CSV = DEFAULT_ALIGNMENT_OUTPUT_DIR / "aligned_train_sentences.csv"
+DEFAULT_ALIGNMENT_REPORT_JSON = DEFAULT_ALIGNMENT_OUTPUT_DIR / "alignment_report.json"

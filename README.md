@@ -151,6 +151,26 @@ python -m akk2eng.pipeline.train --max-samples 50 --epochs 1 --device cpu --fp32
 
 **`--device`:** `auto` (default), `cpu`, `cuda`. **`--fp32`:** conservative float32 (recommended on **Blackwell / new GPUs**).
 
+**M04 — sentence alignment (optional training corpus):**
+
+```bash
+# Build aligned_train_sentences.csv + alignment_report.json (gitignored under data/derived/)
+python -m akk2eng.pipeline.align
+
+# Phase A data audit only → outputs/alignment/baseline_alignment_audit.json
+python -m akk2eng.pipeline.align --audit-only
+```
+
+**M04 — continue fine-tuning from `outputs/m01_t5` on aligned rows:**
+
+```bash
+python -m akk2eng.pipeline.train \
+  --train-csv data/derived/alignment/aligned_train_sentences.csv \
+  --resume-model-dir outputs/m01_t5 \
+  --output-dir outputs/m04_t5_aligned \
+  --device cuda --fp32
+```
+
 **Checkpoint hash manifest** (repeat runs / audit):
 
 ```bash
