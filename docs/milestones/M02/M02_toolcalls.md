@@ -7,6 +7,7 @@
 | 2026-03-21 | M02-C: `repetition_penalty=1.2`, `no_repeat_ngram_size=3` in `T5BaselineTranslator.generate` | Dev chrF 18.65→34.41; repetition bucket 87.8%→73.7%; see [M02_run1_m02c_decoding.md](M02_run1_m02c_decoding.md) |
 | 2026-03-21 | M02-C.1: Kaggle notebook `generate()` updated to match repo decode | Log template: [M02_run2_kaggle.md](M02_run2_kaggle.md); fill public LB after submit |
 | 2026-03-21 | M02-C.2: `repetition_penalty` 1.2→1.1 only; archive 1.2 eval; re-eval + analyze | [M02_run2_local_refinement.md](M02_run2_local_refinement.md); chrF 34.4→42.8; `SUBMIT_TO_KAGGLE=YES` |
+| 2026-03-21 | M02-C.3: `DECODE_NUM_BEAMS=3`; archive greedy@1.1; beam vs greedy eval | [M02_run3_local_beam.md](M02_run3_local_beam.md); BLEU 30.1→43.0; chrF 42.8→39.9; `SUBMIT_TO_KAGGLE=YES` |
 
 ## Targeted error analysis workflow (checklist)
 

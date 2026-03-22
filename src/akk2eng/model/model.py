@@ -1,4 +1,4 @@
-"""T5 baseline: load checkpoint and run deterministic greedy decoding."""
+"""T5 baseline: load checkpoint and run deterministic decoding (greedy or beam per config)."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from transformers import PreTrainedModel, PreTrainedTokenizerBase
 from akk2eng.config import (
     BASE_MODEL_ID,
     DECODE_NO_REPEAT_NGRAM_SIZE,
+    DECODE_NUM_BEAMS,
     DECODE_REPETITION_PENALTY,
     MAX_INPUT_LENGTH,
     MAX_NEW_TOKENS,
@@ -59,7 +60,7 @@ def resolve_model_path(model_dir: Path | None) -> tuple[str, bool]:
 
 
 class T5BaselineTranslator:
-    """Greedy seq2seq translation for one T5-style checkpoint."""
+    """Seq2seq translation for one T5-style checkpoint (``DECODE_NUM_BEAMS`` in config)."""
 
     def __init__(self, model_dir: Path | None = None) -> None:
         set_deterministic_seeds()
@@ -105,7 +106,7 @@ class T5BaselineTranslator:
                 **enc,
                 max_new_tokens=MAX_NEW_TOKENS,
                 do_sample=False,
-                num_beams=1,
+                num_beams=DECODE_NUM_BEAMS,
                 repetition_penalty=DECODE_REPETITION_PENALTY,
                 no_repeat_ngram_size=DECODE_NO_REPEAT_NGRAM_SIZE,
             )

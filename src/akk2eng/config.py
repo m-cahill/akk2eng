@@ -15,9 +15,12 @@ MAX_INPUT_LENGTH = 512
 MAX_TARGET_LENGTH = 512
 MAX_NEW_TOKENS = 256
 
-# M02-C / M02-C.2: greedy decoding — repetition control only (no beam; see M02_plan)
+# M02-C / C.2 / C.3: deterministic decoding (no sampling). Repetition control always on.
+# M02-C.3: num_beams>1 is an experiment for Kaggle-alignment (see M02_run3_local_beam.md);
+# historical baseline contract was greedy (num_beams=1).
 DECODE_REPETITION_PENALTY = 1.1
 DECODE_NO_REPEAT_NGRAM_SIZE = 3
+DECODE_NUM_BEAMS = 3
 
 DEFAULT_TRAIN_CSV = Path("data") / "train.csv"
 DEFAULT_TEST_CSV = Path("data") / "test.csv"

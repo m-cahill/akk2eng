@@ -14,6 +14,7 @@ import sacrebleu
 
 from akk2eng.config import (
     DECODE_NO_REPEAT_NGRAM_SIZE,
+    DECODE_NUM_BEAMS,
     DECODE_REPETITION_PENALTY,
     DEFAULT_DEV_SPLIT_CSV,
     DEFAULT_EVAL_OUTPUT_DIR,
@@ -97,7 +98,7 @@ def run_eval(
     metrics_path = eval_output_dir / "metrics.json"
     decoding = {
         "do_sample": False,
-        "num_beams": 1,
+        "num_beams": DECODE_NUM_BEAMS,
         "max_new_tokens": MAX_NEW_TOKENS,
         "repetition_penalty": DECODE_REPETITION_PENALTY,
         "no_repeat_ngram_size": DECODE_NO_REPEAT_NGRAM_SIZE,
@@ -125,7 +126,8 @@ def run_eval(
         f"sacrebleu: {metrics['sacrebleu_version']}",
         f"seed: {SEED}, dev_fraction: {DEV_FRACTION}",
         (
-            f"decoding: greedy, repetition_penalty={DECODE_REPETITION_PENALTY}, "
+            f"decoding: num_beams={DECODE_NUM_BEAMS}, do_sample=False, "
+            f"repetition_penalty={DECODE_REPETITION_PENALTY}, "
             f"no_repeat_ngram_size={DECODE_NO_REPEAT_NGRAM_SIZE}, "
             f"max_new_tokens={MAX_NEW_TOKENS}"
         ),
