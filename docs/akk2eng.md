@@ -58,7 +58,8 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 | **M02** | Evaluation + targeted improvement loop | ✅ Complete (`M02_summary.md`, `M02_audit.md`; tag `v0.0.5-m02`) |
 | **M03** | Normalization engine | ✅ Complete (`M03_summary.md`, `M03_audit.md`; tag `v0.0.6-m03`) |
 | **M04** | Sentence alignment | ✅ Complete (`M04_summary.md`, `M04_audit.md`; tag `v0.0.7-m04`) |
-| **M05** | Data augmentation | 🚧 Next (`docs/milestones/M05/M05_plan.md`) |
+| **M05** | Data augmentation | ✅ Complete (`M05_summary.md`, `M05_audit.md`; tag `v0.0.8-m05`) |
+| **M06** | Precision-preserving data expansion | 🚧 Next (`docs/milestones/M06/M06_plan.md`) |
 
 ## M01 scope (baseline model)
 
@@ -73,7 +74,7 @@ M01 introduces the first real translation logic:
 
 ### M01 sub-phases (execution)
 
-**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). **M03 closed** (`v0.0.6-m03`). **M04 closed** (`v0.0.7-m04`). Active work continues at **M05** per roadmap.
+**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). **M03 closed** (`v0.0.6-m03`). **M04 closed** (`v0.0.7-m04`). **M05 closed** (`v0.0.8-m05`). Active work continues at **M06** per roadmap.
 
 | Sub-phase | Status | Intent |
 |-----------|--------|--------|
@@ -150,7 +151,7 @@ Submissions are only allowed when **dev chrF improves** over the previous best (
 
 **Conclusion:**  
 Normalization is validated as a **safe** transformation layer but is **not** a primary optimization lever.  
-Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); next roadmap focus is **M05** (data augmentation).
+Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); **M05** (data augmentation) is ✅ complete (`v0.0.8-m05`); next roadmap focus is **M06** (precision-preserving expansion).
 
 ## M04 scope (sentence alignment)
 
@@ -182,7 +183,40 @@ Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); n
 - **Thesis:** aligns with `docs/moonshot.md` — **fixing data structure** (sentence alignment) yields measurable gain without model swap.
 
 **Conclusion:**  
-M04 complete. Next roadmap focus: **M05 (data augmentation)** — see `docs/milestones/M05/M05_plan.md`.
+M04 complete. Next at time of M04 closeout was **M05**; **M05 is now closed** — see `docs/milestones/M05/M05_summary.md`. Active next: **M06** — `docs/milestones/M06/M06_plan.md`.
+
+## M05 scope (data augmentation / alignment expansion)
+
+**Closed** (`v0.0.8-m05`). Split-safe **expansion** of sentence-aligned pairs (`python -m akk2eng.pipeline.augment --split-safe`) on top of M04 strict alignment, with full row provenance and hashes. **Closeout:** `docs/milestones/M05/M05_summary.md`, `docs/milestones/M05/M05_audit.md`.
+
+### Pipeline
+
+- **Engine:** `src/akk2eng/data/augmentation.py` — relaxed first-word, English `;` resplit, partial-prefix recovery; deterministic CSV + `augmentation_report.json`.
+- **CLI:** `python -m akk2eng.pipeline.augment --split-safe` → `data/derived/augmentation/augmented_train_sentences.csv` (gitignored); dev overlap check (fail-closed).
+- **Training:** same continuation contract as M04 (`--resume-model-dir outputs/m01_t5`, 3-epoch comparison vs aligned-only control).
+
+### Derived dataset contract (gitignored)
+
+| Path | Role |
+|------|------|
+| `data/derived/augmentation/augmented_train_sentences.csv` | Strict + expanded rows (542 as-built), provenance columns |
+| `data/derived/augmentation/augmentation_report.json` | Counts, `by_type`, SHA-256 |
+
+### M05 Closeout
+
+- **Builder:** 236 strict + 306 expansion rows = **542** total; **0** dev `oare_id` overlap.
+- **GPU eval (same run):** control (236-row aligned) **chrF 45.36**; augmented (542-row) **chrF 20.39**; **Δ ≈ −25 chrF** vs control.
+- **M04 pin (~43.34):** augmented **far below**; control **above** pin (run variance—**augmented vs control** is the primary discriminator).
+- **Thesis tested:** naive **volume** expansion without **quality gating** **hurts**; **precision > recall** for this supervision.
+
+```text
+M05 demonstrated that mixing low-confidence partial-prefix pairs with strict
+alignment degraded translation quality catastrophically. Future expansion must
+preserve alignment precision (gating, weighting, or selective inclusion).
+```
+
+**Conclusion:**  
+M05 complete. Next roadmap focus: **M06 (precision-preserving data expansion)** — `docs/milestones/M06/M06_plan.md`.
 
 ## Planned milestone roadmap
 
@@ -192,14 +226,15 @@ M04 complete. Next roadmap focus: **M05 (data augmentation)** — see `docs/mile
 | M02 | Evaluation + targeted improvement loop (✅ closed) |
 | M03 | Normalization engine (✅ closed) |
 | M04 | Sentence alignment (✅ closed) |
-| M05 | Data augmentation (🚧 next) |
-| M06 | Lexicon integration |
-| M07 | Named entity handling |
-| M08 | Rule-based improvements |
-| M09 | Model upgrade |
-| M10 | Training stabilization |
-| M11 | Post-processing |
-| M12 | Final submission system |
+| M05 | Data augmentation (✅ closed) |
+| M06 | Precision-preserving data expansion (🚧 next) |
+| M07 | Lexicon integration |
+| M08 | Named entity handling |
+| M09 | Rule-based improvements |
+| M10 | Model upgrade |
+| M11 | Training stabilization |
+| M12 | Post-processing |
+| M13 | Final submission system |
 
 ## Execution modes (invariant)
 
@@ -268,6 +303,7 @@ Full CI rigor (coverage gates, security scanning, reproducibility enforcement) d
 | v0.0.5-m02 | M02 complete — evaluation harness, error analysis, decoding optimization, lexicon validation |
 | v0.0.6-m03 | M03 complete — normalization engine implemented, validated, stabilized (`NORMALIZATION_VERSION=v2`) |
 | v0.0.7-m04 | M04 complete — sentence alignment implemented, leakage fixed, **+3.48 chrF** validated (split-safe) |
+| v0.0.8-m05 | M05 complete — alignment expansion implemented; **regression** vs same-run control (~**−25 chrF**); precision > recall |
 
 ## Related governance docs
 

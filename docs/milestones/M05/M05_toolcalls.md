@@ -12,6 +12,7 @@
 | 2026-03-22T20:00:00Z | CUDA check | `torch.cuda.is_available()` False — M05 GPU train/eval **not started**; `M05_run2` updated with explicit eval `--output-dir` / `--experiments-dir` commands; decision label remains pending local GPU. |
 | 2026-03-22T21:00:00Z | write | Added `M05_local_gpu_execution.md` (local RTX/CUDA runbook); linked from `M05_run2` + `M05_plan.md`. |
 | 2026-03-22T22:00:00Z | README | Link M05 section → `M05_local_gpu_execution.md` for CUDA train/eval; pytest + ruff green. |
+| 2026-03-22T23:30:00Z | closeout | GPU eval: control chrF 45.3584, augmented 20.3932; `M05_summary`, `M05_audit`, `M05_run2`, `akk2eng.md`, `M06` seed; tag `v0.0.8-m05`. |
 
 ## Copy-paste anchors
 

@@ -2,9 +2,23 @@
 
 **Milestone:** M05  
 **Title:** Data augmentation  
-**Status:** **In progress**  
-**Branch:** `m05-data-augmentation`  
-**Baseline tag:** `v0.0.7-m04`
+**Status:** **✅ Complete (closed)**  
+**Branch:** `m05-data-augmentation` (merge to `main` at tag)  
+**Baseline tag:** `v0.0.7-m04`  
+**Closeout tag:** `v0.0.8-m05`
+
+### As-run exit (locked)
+
+GPU 3-epoch continuation from `outputs/m01_t5`, frozen dev eval (beam=3, lex on, norm v2):
+
+| Run | chrF |
+|-----|------|
+| M05 control (236-row split-safe aligned) | **45.3584** |
+| M05 augmented (542-row expanded) | **20.3932** |
+
+**Decision:** `M05 regression — augmentation hurts` (augmented ≪ control and ≪ M04 pin ~43.34).
+
+**Closeout docs:** [M05_summary.md](M05_summary.md), [M05_audit.md](M05_audit.md), [M05_run2_training_eval.md](M05_run2_training_eval.md).
 
 ---
 
@@ -128,7 +142,7 @@ python -m akk2eng.pipeline.train \
 * No decoding / normalization changes
 * No lexicon expansion
 * No Kaggle submission until validated locally
-* No **`docs/akk2eng.md`** milestone closeout update until M05 is audited (per handoff)
+* ~~No `docs/akk2eng.md` update until closeout~~ — updated at M05 closure (`v0.0.8-m05`).
 
 ---
 

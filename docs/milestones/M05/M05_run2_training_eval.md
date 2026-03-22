@@ -1,7 +1,7 @@
 # M05 — Run 2: Training + eval vs M04 baseline
 
 **Milestone:** M05  
-**Baseline to beat:** dev chrF **≈ 43.34** (M04 split-safe aligned-only, 3 epochs, same eval contract as M02/M04).
+**Status:** **Complete** (local GPU, 2026-03-22)
 
 ---
 
@@ -9,17 +9,25 @@
 
 | Phase | Status |
 |--------|--------|
-| Augmentation builder (`--split-safe`) | **Done** — [M05_run1_augmentation_builder.md](M05_run1_augmentation_builder.md) |
-| Control + augmented **3-epoch GPU** train | **Blocked in Cursor/cloud sessions** — `torch.cuda.is_available()` **False** (verified again on GPU execution prompt) |
-| Eval on `m05_t5_*` checkpoints | **Pending** — requires checkpoints from local GPU training |
+| Augmentation builder | **Done** — [M05_run1_augmentation_builder.md](M05_run1_augmentation_builder.md) |
+| Control 3-epoch GPU train | **Done** → `outputs/m05_t5_control_aligned` |
+| Augmented 3-epoch GPU train | **Done** → `outputs/m05_t5_augmented` |
+| Eval (both) | **Done** → `outputs/eval_m05_control`, `outputs/eval_m05_augmented` |
 
-**Milestone-grade chrF must come from your machine** (e.g. RTX 5090 / cu128). Do **not** use long CPU training as the comparison surface.
+**Eval commands used (as-run):**
 
-**Copy/paste runbook:** [M05_local_gpu_execution.md](M05_local_gpu_execution.md)
+```bash
+python -m akk2eng.pipeline.eval --model-dir outputs/m05_t5_control_aligned --output-dir outputs/eval_m05_control
+python -m akk2eng.pipeline.eval --model-dir outputs/m05_t5_augmented --output-dir outputs/eval_m05_augmented
+```
+
+(Optional mirrored experiment dirs: `--experiments-dir outputs/experiments_m05_*` — not required for metrics.)
 
 ---
 
-## Step 1 — Control training (GPU, run first)
+## Training commands (reference)
+
+**Control (run first):**
 
 ```bash
 python -m akk2eng.pipeline.train \
@@ -30,9 +38,7 @@ python -m akk2eng.pipeline.train \
   --epochs 3
 ```
 
----
-
-## Step 2 — Augmented training (GPU)
+**Augmented:**
 
 ```bash
 python -m akk2eng.pipeline.train \
@@ -45,98 +51,67 @@ python -m akk2eng.pipeline.train \
 
 ---
 
-## Step 3 — Evaluate both (separate eval + experiment dirs)
-
-```bash
-python -m akk2eng.pipeline.eval \
-  --model-dir outputs/m05_t5_control_aligned \
-  --output-dir outputs/eval_m05_control \
-  --experiments-dir outputs/experiments_m05_control
-
-python -m akk2eng.pipeline.eval \
-  --model-dir outputs/m05_t5_augmented \
-  --output-dir outputs/eval_m05_augmented \
-  --experiments-dir outputs/experiments_m05_augmented
-```
-
-Metrics: read `outputs/eval_m05_control/metrics.json` and `outputs/eval_m05_augmented/metrics.json` (or the latest `exp_*` snapshot under each `experiments_*` dir).
-
----
-
-## Results table (fill after local GPU runs)
+## Results table (as-run)
 
 | Run | chrF | BLEU |
 |-----|------|------|
-| M05 control | _pending_ | _pending_ |
-| M05 augmented | _pending_ | _pending_ |
-| M04 baseline | ~43.34 | — (see M04 run notes) |
+| M05 control | **45.3584** | **63.8998** |
+| M05 augmented | **20.3932** | **12.7255** |
+| M04 baseline (historical pin) | **~43.34** | — |
 
-### Extended (optional)
+**Δ vs control:** **20.3932 − 45.3584 = −24.9652** chrF.
+
+### Extended
 
 | Run | `model_dir` | chrF | BLEU | Notes |
 |-----|-------------|------|------|--------|
-| M05 control | `outputs/m05_t5_control_aligned` | _pending_ | _pending_ | 3-epoch aligned-only |
-| M05 augmented | `outputs/m05_t5_augmented` | _pending_ | _pending_ | 542-row augmented CSV |
+| M05 control | `outputs/m05_t5_control_aligned` | 45.3584 | 63.8998 | 236 rows, 177 steps |
+| M05 augmented | `outputs/m05_t5_augmented` | 20.3932 | 12.7255 | 542 rows, 408 steps |
 
 ---
 
-## Interpretation (fill after GPU runs)
+## Interpretation
 
-Answer **all** after both evals complete:
+1. **vs M04 baseline (~43.34):** Augmented (**20.39**) **did not** beat the historical pin; it **collapsed** vs it.
+2. **vs M05 control:** Augmented **did not** beat control; **large regression**.
+3. **Δ vs control:** **≈ −24.97 chrF** (primary milestone discriminator).
+4. **Augmentation types** (builder): `direct_aid_strict` **236**; `expanded_partial_prefix` **296**; `expanded_partial_prefix_relaxed` **8**; `expanded_english_resplit` **2**. Most added mass is **partial-prefix**—M05 effectively tested whether that recall path adds usable signal when mixed unweighted with strict pairs.
+5. **Readout:** **Regression.** Sample augmented outputs skewed **short / generic** (e.g. witness boilerplate) vs control’s fuller translations—consistent with **noisy or mis-paired** supervision **diluting** the high-confidence strict signal.
 
-1. Did augmented beat **M04 baseline (~43.34)**?
-2. Did augmented beat **M05 control**?
-3. **Δ vs control** = augmented chrF − control chrF = _pending_
-4. **Augmentation types** (from Run 1 builder): `direct_aid_strict` 236; `expanded_partial_prefix` 296; `expanded_partial_prefix_relaxed` 8; `expanded_english_resplit` 2.
-5. **Readout:** real improvement vs neutral vs regression? (be explicit and conservative.)
+**Control vs M04 pin:** Control **45.36** > historical **~43.34** → treat **same-run augmented vs control** as authoritative; historical baseline is a **sanity bracket**, not the only comparator.
 
-### Success criteria (locked)
+### Success criteria (locked) — outcome
 
-| Outcome | Condition |
-|---------|-----------|
-| **FAIL** | augmented ≤ control **or** augmented ≤ ~43.34 |
-| **SUCCESS** | augmented **>** ~43.34 **and** augmented **>** control |
-| **STRONG** | augmented **≥** 45 |
-| **EXCEPTIONAL** | augmented **≥** 47 |
+| Gate | Result |
+|------|--------|
+| FAIL if augmented ≤ control or ≤ ~43.34 | **FAIL** (both) |
+| SUCCESS if augmented > ~43.34 and > control | **Not met** |
 
 ---
 
-## Decision label (REQUIRED after measurement)
-
-Choose **exactly one** once the results table is filled from **local** GPU eval:
-
-* `M05 success candidate — augmented beats baseline and control`
-* `M05 neutral — augmented does not clearly beat control`
-* `M05 regression — augmentation hurts`
-
-**Until then:**
+## Decision label (REQUIRED)
 
 ```text
-M05 decision pending — GPU training/eval not executed in this environment (CUDA unavailable); run Steps 1–3 locally and assign one label above from measured chrF.
+M05 regression — augmentation hurts
 ```
 
 ---
 
-## Expected artifacts (after local completion)
+## Artifacts (local, gitignored)
 
 * `outputs/m05_t5_control_aligned/`
 * `outputs/m05_t5_augmented/`
-* `outputs/eval_m05_control/`
-* `outputs/eval_m05_augmented/`
-* `outputs/experiments_m05_control/` / `outputs/experiments_m05_augmented/`
-
----
-
-## Exit criteria (from plan)
-
-| Tier | chrF |
-|------|------|
-| Minimum | **> 43.34** |
-| Strong | **≥ 45** |
-| Exceptional | **≥ 47** |
+* `outputs/eval_m05_control/metrics.json`
+* `outputs/eval_m05_augmented/metrics.json`
 
 ---
 
 ## Submission
 
-No Kaggle submission until dev chrF validates improvement (project discipline).
+No Kaggle submission (dev regression; project discipline).
+
+---
+
+## Runbook
+
+[M05_local_gpu_execution.md](M05_local_gpu_execution.md)
