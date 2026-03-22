@@ -14,6 +14,7 @@
 | 2026-03-22T09:45:00Z | Align | `python -m akk2eng.pipeline.align` + `--audit-only`; run notes in `M04_run1_*`, `M04_run2_*`. |
 | 2026-03-22T10:00:00Z | Mix + train | `mix_train`; multi `--train-csv`; Exp1/Exp2 train + eval → `M04_run3_training_eval.md`. |
 | 2026-03-22T12:00:00Z | GPU confirm | Attempted aligned `epochs=3` `--device cuda`; CUDA unavailable in session → doc-only block in `M04_run3_training_eval.md`. |
+| 2026-03-22T14:00:00Z | Aligned full | `train` 3 ep `--device auto` (CPU) → `m04_t5_aligned_full`; `eval` → `eval_m04_aligned_full`; `M04_run3` metrics + leakage note. |
 
 ## Copy-paste anchors
 

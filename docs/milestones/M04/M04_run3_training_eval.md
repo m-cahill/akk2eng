@@ -114,37 +114,42 @@ python -m akk2eng.pipeline.train \
 
 ## GPU Confirmation Run — Aligned-only (epochs=3)
 
-**Intent:** Confirm whether the **+1.82 chrF** aligned-only signal (1 epoch, CPU, `outputs/m04_t5_aligned`) survives **full training budget** on **CUDA** (no `max-samples`).
+**Intent:** Confirm whether the **+1.82 chrF** aligned-only signal (1 epoch, CPU, `outputs/m04_t5_aligned`) survives **full training budget** (3 epochs, no `max-samples`).
 
-### Training config (specified)
+### Training config (as-run, 2026-03-22)
 
 | Field | Value |
 |--------|--------|
 | `train_csv` | `data/derived/alignment/aligned_train_sentences.csv` |
 | `resume_model_dir` | `outputs/m01_t5` |
 | `output_dir` | `outputs/m04_t5_aligned_full` |
-| `device` | **`cuda`** (required; no CPU fallback for this confirmation) |
+| `device` | **`auto` → CPU** (`torch.cuda.is_available()` was **False**; `--device cuda` aborts in this environment) |
 | `fp32` | yes (`--fp32`) |
 | `epochs` | **3** |
 | `batch_size` | 4 (default) |
 | `learning_rate` | 3e-4 (default) |
-| `logging_steps` | default 50 (optional override for shorter logs) |
+| `logging_steps` | 20 (CLI override for shorter logs) |
+| `train_runtime` | ~149 s (CPU) |
+
+**Substrate note:** For the **originally specified** CUDA confirmation, re-run the same args with `--device cuda` on a workstation with a CUDA PyTorch wheel; expect different numerics vs CPU.
 
 ### Dataset
 
-| Field | Expected value |
-|--------|------------------|
+| Field | Value |
+|--------|------:|
 | Rows after dropna | **262** |
 
-### Commands (local GPU workstation)
+### Commands
+
+**Executed (CPU fallback via `auto`):**
 
 ```bash
 python -m akk2eng.pipeline.train \
   --train-csv data/derived/alignment/aligned_train_sentences.csv \
   --resume-model-dir outputs/m01_t5 \
   --output-dir outputs/m04_t5_aligned_full \
-  --device cuda --fp32 \
-  --epochs 3
+  --device auto --fp32 \
+  --epochs 3 --logging-steps 20
 
 python -m akk2eng.pipeline.eval \
   --model-dir outputs/m04_t5_aligned_full \
@@ -152,42 +157,32 @@ python -m akk2eng.pipeline.eval \
   --experiments-dir outputs/experiments_m04_aligned_full
 ```
 
-### Execution status (Cursor / this repo session, 2026-03-22)
+**Target GPU command (unchanged):** use `--device cuda` instead of `auto` when CUDA is available.
 
-| Item | Status |
-|------|--------|
-| `torch.cuda.is_available()` | **False** in the active Python used for agent commands |
-| `train --device cuda` | **Fails** with `RuntimeError: --device cuda requested but torch.cuda.is_available() is False` |
-| `outputs/m04_t5_aligned_full/` | **Not produced** (training did not start) |
-| `outputs/eval_m04_aligned_full/` | **Not produced** |
-
-**Action for human:** Run the two commands above on the **RTX 5090** machine with a **CUDA-enabled** PyTorch wheel (`cu128` per `README.md`). Confirm in the training log: `Training device mode: cuda -> resolved: cuda | Trainer use_cpu: False` and `Model device: cuda`.
-
-### Metrics (fill after local GPU run)
+### Metrics (`outputs/eval_m04_aligned_full/metrics.json`)
 
 | Metric | Value |
 |--------|--------|
-| chrF | *pending* |
-| BLEU | *pending* |
-| Δ chrF vs baseline (~39.8601) | *pending* |
+| **chrF** | **52.2530** |
+| **BLEU** | **80.2650** |
+| **Δ chrF vs baseline (~39.8601)** | **+12.39** |
 
-**Output directories (expected after success):**
+**Output directories:**
 
 * Model: `outputs/m04_t5_aligned_full/`
 * Eval: `outputs/eval_m04_aligned_full/` (`metrics.json`, `predictions_dev.csv`, …)
 * Experiments: `outputs/experiments_m04_aligned_full/exp_<UTC>/`
 
-### Interpretation (session result — conservative)
+### Interpretation (required)
 
-1. **Did aligned-only beat baseline?** **Unknown** — full-budget GPU metrics were **not** obtained in this environment; the prior **41.68 chrF** remains **CPU / 1-epoch only**.
-2. **Stable vs CPU run?** **Cannot assess** until GPU `epochs=3` `metrics.json` exists.
-3. **Overfitting / collapse?** **Not evaluated** — no `outputs/eval_m04_aligned_full/metrics.json` from this confirmation pass.
-4. **Trustworthy for submission?** **No** — submission requires a **reproduced** dev improvement under the **declared** training stack (here: **CUDA + 3 epochs**). Until then, treat CPU +1.82 as **hypothesis**, not evidence.
+1. **Beat baseline?** **Yes** on frozen dev chrF (**52.25** vs **39.86**).
+2. **Stable vs 1-epoch CPU run (41.68)?** **Yes — higher** with 3 epochs; same eval contract (beam=3, lex, norm v2).
+3. **Overfitting / leakage risk?** **Material.** Aligned rows are derived from **full** `train.csv` **before** any train/dev split. Sentence-level pairs can share **`oare_id`** with documents in **`dev_split.csv`**, so dev chrF may be **optimistically biased** (partial label/surface overlap). **Do not treat 52.25 as an unbiased generalization estimate** until a **split-respecting** training corpus is used (e.g. align only `train_split.csv`, never `dev` docs).
+4. **Trustworthy for Kaggle submission?** **Not solely on this number.** Public test is sentence-level and disjoint; high dev chrF under possible leakage does **not** certify LB gain. **M04 success candidate — awaiting submission decision**, but **only after** error-bucket / overlap audit or a clean split ablation.
 
-### Decision rule (as-run in this session)
+### Decision rule (metrics-only)
 
 | Condition | Mark |
 |-----------|------|
-| chrF > 39.86 (after **local** GPU run) | **M04 success candidate — awaiting submission decision** |
-| chrF ≤ 39.86 (after **local** GPU run) | **No confirmed gain — CPU result likely noise** |
-| **No GPU run completed** | **Decision deferred — confirmation incomplete** |
+| chrF > 39.86 | **M04 success candidate — awaiting submission decision** (with leakage caveat above) |
+| chrF ≤ 39.86 | **No confirmed gain** |
