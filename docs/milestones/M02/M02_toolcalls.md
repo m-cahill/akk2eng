@@ -8,6 +8,7 @@
 | 2026-03-21 | M02-C.1: Kaggle notebook `generate()` updated to match repo decode | Log template: [M02_run2_kaggle.md](M02_run2_kaggle.md); fill public LB after submit |
 | 2026-03-21 | M02-C.2: `repetition_penalty` 1.2→1.1 only; archive 1.2 eval; re-eval + analyze | [M02_run2_local_refinement.md](M02_run2_local_refinement.md); chrF 34.4→42.8; `SUBMIT_TO_KAGGLE=YES` |
 | 2026-03-21 | M02-C.3: `DECODE_NUM_BEAMS=3`; archive greedy@1.1; beam vs greedy eval | [M02_run3_local_beam.md](M02_run3_local_beam.md); BLEU 30.1→43.0; chrF 42.8→39.9; `SUBMIT_TO_KAGGLE=YES` |
+| 2026-03-22 | M02-D: eBL lexicon post-process on predictions; archive beam preds; eval + analyze | [M02_run4_lexicon.md](M02_run4_lexicon.md); dev 0/156 rows changed; chrF/BLEU identical; `SUBMIT_TO_KAGGLE=NO_NEW_SUBMIT_REQUIRED` |
 
 ## Targeted error analysis workflow (checklist)
 

@@ -89,6 +89,7 @@ Bring-up uses **conservative FP32** in the GPU probe path; full training can use
 **Active milestone.** M01 baseline (public LB **11.9**) is frozen; M02 improves score through **measurement-first** iteration.
 
 - **Dev decoding (M02-C / C.2 / C.3):** `config.py` sets `repetition_penalty=1.1`, `no_repeat_ngram_size=3`, and **`num_beams=3`** (M02-C.3 beam experiment; see `docs/milestones/M02/M02_run3_local_beam.md`). Eval artifacts record full `decoding` dict. Greedy@1.1 archive: `M02_run2_local_refinement.md`; penalty 1.2 step: `M02_run1_m02c_decoding.md`. **Kaggle notebook:** must match repo decode (including **`num_beams`**). Submit log: `docs/milestones/M02/M02_run2_kaggle.md`.
+- **Lexicon post-process (M02-D):** `USE_LEXICON`, `DEFAULT_LEXICON_CSV`, `LEXICON_MAX_ENTRIES` in `config.py`; applied in `run_inference()` **only to model outputs** (train-filtered `form→lexeme`, boundary-safe regex). CLI: `--no-lexicon`, `--lexicon-csv`, `--lexicon-train-csv`, `--lexicon-max-entries` on `pipeline.eval`; `pipeline.run` supports `--no-lexicon` / lexicon overrides. See `docs/milestones/M02/M02_run4_lexicon.md`.
 - **Plan:** `docs/milestones/M02/M02_plan.md` — dev eval harness, error buckets, targeted fixes (normalization preview, lexicon injection, decoding), re-submit only on proven deltas.  
 - **Tool log:** `docs/milestones/M02/M02_toolcalls.md`.  
 - **Strategy mirror:** `docs/milestones/M01/M01_run3.md` (section **Next: M02**).

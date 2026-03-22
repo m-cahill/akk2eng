@@ -172,6 +172,8 @@ python -m akk2eng.pipeline.eval --train-csv data/train.csv --model-dir outputs/m
 
 Writes `data/splits/train_split.csv` and `data/splits/dev_split.csv` once (reuse thereafter), then `outputs/eval/predictions_dev.csv`, `metrics.json`, `eval_summary.txt`, plus a snapshot under `outputs/experiments/exp_<UTC>/`. Regenerate splits from a new `train.csv` with `--force-splits`.
 
+By default, **M02-D lexicon post-processing** runs on predictions (`USE_LEXICON` in `config.py`). Disable with `python -m akk2eng.pipeline.eval --no-lexicon` (or `--lexicon-csv` / `--lexicon-max-entries` for A/B).
+
 **Dev error buckets (M02-B — from `outputs/eval/predictions_dev.csv`):**
 
 ```bash

@@ -19,18 +19,21 @@ from akk2eng.config import (
     DEFAULT_DEV_SPLIT_CSV,
     DEFAULT_EVAL_OUTPUT_DIR,
     DEFAULT_EXPERIMENTS_DIR,
+    DEFAULT_LEXICON_CSV,
     DEFAULT_MODEL_DIR,
     DEFAULT_SPLITS_DIR,
     DEFAULT_TRAIN_CSV,
     DEFAULT_TRAIN_SPLIT_CSV,
     DEV_FRACTION,
+    LEXICON_MAX_ENTRIES,
     MAX_NEW_TOKENS,
     SEED,
+    USE_LEXICON,
 )
 from akk2eng.data.loader import load_csv
 from akk2eng.data.schema import COL_TRANSLATION, COL_TRANSLITERATION
 from akk2eng.data.splits import ensure_split_csvs
-from akk2eng.pipeline.inference import run_inference
+from akk2eng.pipeline.inference import resolved_lexicon_pairs, run_inference
 
 
 def compute_translation_metrics(
@@ -62,6 +65,10 @@ def run_eval(
     batch_size: int,
     force_splits: bool,
     quiet: bool,
+    use_lexicon: bool | None = None,
+    lexicon_csv: Path | None = None,
+    lexicon_train_csv: Path | None = None,
+    lexicon_max_entries: int | None = None,
 ) -> dict[str, Any]:
     """Ensure splits, run inference on dev, write eval + experiment artifacts."""
     ensure_split_csvs(
@@ -78,11 +85,20 @@ def run_eval(
         msg = f"Dev split must contain {COL_TRANSLITERATION!r} and {COL_TRANSLATION!r}"
         raise ValueError(msg)
 
+    do_lex = USE_LEXICON if use_lexicon is None else use_lexicon
+    lcsv = DEFAULT_LEXICON_CSV if lexicon_csv is None else lexicon_csv
+    ltrain = train_csv if lexicon_train_csv is None else lexicon_train_csv
+    lcap = LEXICON_MAX_ENTRIES if lexicon_max_entries is None else lexicon_max_entries
+
     preds = run_inference(
         dev_df,
         model_dir=model_dir,
         batch_size=batch_size,
         quiet=quiet,
+        use_lexicon=do_lex,
+        train_csv=ltrain,
+        lexicon_csv=lcsv,
+        lexicon_max_entries=lcap,
     )
     refs = dev_df[COL_TRANSLATION].fillna("").astype(str).tolist()
     metrics = compute_translation_metrics(preds, refs)
@@ -103,6 +119,22 @@ def run_eval(
         "repetition_penalty": DECODE_REPETITION_PENALTY,
         "no_repeat_ngram_size": DECODE_NO_REPEAT_NGRAM_SIZE,
     }
+    n_lex = 0
+    if do_lex:
+        n_lex = len(
+            resolved_lexicon_pairs(
+                train_csv=ltrain,
+                lexicon_csv=lcsv,
+                lexicon_max_entries=lcap,
+            ),
+        )
+    lexicon_cfg = {
+        "use_lexicon": do_lex,
+        "lexicon_csv": str(Path(lcsv).resolve()) if do_lex else None,
+        "train_csv_for_lexicon": str(Path(ltrain).resolve()) if do_lex else None,
+        "max_entries": int(lcap) if do_lex else None,
+        "n_entries": n_lex,
+    }
     metrics_blob = {
         **metrics,
         "primary_metric": "chrf",
@@ -115,6 +147,7 @@ def run_eval(
         "train_split_csv": str(Path(train_split_csv).resolve()),
         "model_dir": str(Path(model_dir).resolve()) if model_dir else None,
         "decoding": decoding,
+        "lexicon": lexicon_cfg,
     }
     metrics_path.write_text(json.dumps(metrics_blob, indent=2) + "\n", encoding="utf-8")
 
@@ -130,6 +163,10 @@ def run_eval(
             f"repetition_penalty={DECODE_REPETITION_PENALTY}, "
             f"no_repeat_ngram_size={DECODE_NO_REPEAT_NGRAM_SIZE}, "
             f"max_new_tokens={MAX_NEW_TOKENS}"
+        ),
+        (
+            f"lexicon: use_lexicon={do_lex}, n_entries={n_lex}, "
+            f"max_entries={lcap if do_lex else 'n/a'}"
         ),
         f"predictions: {pred_path}",
         f"metrics: {metrics_path}",
@@ -159,6 +196,10 @@ def run_eval(
         "eval_output_dir": str(eval_output_dir.resolve()),
         "sacrebleu_version": metrics["sacrebleu_version"],
         "decoding": decoding,
+        "lexicon": lexicon_cfg,
+        "USE_LEXICON": USE_LEXICON,
+        "DEFAULT_LEXICON_CSV": str(Path(DEFAULT_LEXICON_CSV).resolve()),
+        "LEXICON_MAX_ENTRIES": LEXICON_MAX_ENTRIES,
     }
     (exp_dir / "config.json").write_text(
         json.dumps(config_blob, indent=2) + "\n",
@@ -238,6 +279,29 @@ def main() -> None:
         action="store_true",
         help="Suppress stdout summary (artifacts still written)",
     )
+    parser.add_argument(
+        "--no-lexicon",
+        action="store_true",
+        help="Disable M02-D lexicon post-processing on predictions",
+    )
+    parser.add_argument(
+        "--lexicon-csv",
+        type=Path,
+        default=None,
+        help=f"eBL lexicon CSV (default: {DEFAULT_LEXICON_CSV})",
+    )
+    parser.add_argument(
+        "--lexicon-train-csv",
+        type=Path,
+        default=None,
+        help="train.csv used to filter lexicon forms (default: same as --train-csv)",
+    )
+    parser.add_argument(
+        "--lexicon-max-entries",
+        type=int,
+        default=None,
+        help=f"Cap lexicon size after filtering (default: {LEXICON_MAX_ENTRIES})",
+    )
     args = parser.parse_args()
 
     train_split = args.train_split_csv
@@ -257,6 +321,10 @@ def main() -> None:
         batch_size=args.batch_size,
         force_splits=args.force_splits,
         quiet=args.quiet,
+        use_lexicon=False if args.no_lexicon else None,
+        lexicon_csv=args.lexicon_csv,
+        lexicon_train_csv=args.lexicon_train_csv,
+        lexicon_max_entries=args.lexicon_max_entries,
     )
 
 

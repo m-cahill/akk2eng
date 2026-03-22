@@ -38,3 +38,8 @@ DEFAULT_EVAL_OUTPUT_DIR = Path("outputs") / "eval"
 DEFAULT_EXPERIMENTS_DIR = Path("outputs") / "experiments"
 DEFAULT_PREDICTIONS_DEV_CSV = DEFAULT_EVAL_OUTPUT_DIR / "predictions_dev.csv"
 DEFAULT_ANALYSIS_OUTPUT_DIR = Path("outputs") / "analysis"
+
+# M02-D: optional post-processing of English predictions (leaked Akkadian surfaces).
+USE_LEXICON = True
+DEFAULT_LEXICON_CSV = Path("docs") / "kaggledocs" / "OA_Lexicon_eBL.csv"
+LEXICON_MAX_ENTRIES = 400
