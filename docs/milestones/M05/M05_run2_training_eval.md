@@ -5,6 +5,18 @@
 
 ---
 
+## Execution status (this session)
+
+| Phase | Status |
+|--------|--------|
+| Augmentation builder (`--split-safe`) | **Done** — see [M05_run1_augmentation_builder.md](M05_run1_augmentation_builder.md) |
+| Control + augmented **3-epoch GPU** train | **Not run here** — `torch.cuda.is_available()` was **False** in the execution environment |
+| Eval on `m05_t5_*` checkpoints | **Pending** — requires local GPU training first |
+
+**Milestone-grade chrF numbers below are intentionally unfilled until you run train + eval on CUDA** (e.g. RTX 5090 / cu128 per `docs/akk2eng.md`). Do **not** treat long CPU runs as the milestone comparison surface.
+
+---
+
 ## Training (3 epochs — milestone comparison)
 
 **Augmented continuation fine-tune:**
@@ -18,7 +30,7 @@ python -m akk2eng.pipeline.train \
   --epochs 3
 ```
 
-**Control (replication / regression check):** train on split-safe aligned CSV only (M04 path):
+**Control (same-run aligned-only):** train on split-safe aligned CSV only (M04 path):
 
 ```bash
 python -m akk2eng.pipeline.train \
@@ -29,7 +41,7 @@ python -m akk2eng.pipeline.train \
   --epochs 3
 ```
 
-> If CUDA is unavailable in the active environment, keep **implementation + commands** as above; use `--device cpu` only for short smokes. Milestone-grade numbers should be produced on **GPU** when available (RTX 5090 / cu128 posture per `docs/akk2eng.md`).
+> Run **control first**, then **augmented**, without changing augmentation code between the builder run and training.
 
 ---
 
@@ -38,20 +50,53 @@ python -m akk2eng.pipeline.train \
 Same contract as M04 (frozen dev, beam=3, lexicon on, normalization v2):
 
 ```bash
+python -m akk2eng.pipeline.eval --model-dir outputs/m05_t5_control_aligned
 python -m akk2eng.pipeline.eval --model-dir outputs/m05_t5_augmented
 ```
 
-(Adjust `--model-dir` for control run; mirror flags used in `M04_run3_training_eval.md`.)
+(Mirror any extra flags used in `docs/milestones/M04/M04_run3_training_eval.md` if your local harness differs from defaults.)
 
 ---
 
-## Results table (fill after runs)
+## Results table (fill after GPU runs)
 
 | Run | `model_dir` | chrF | BLEU | Notes |
 |-----|-------------|------|------|--------|
-| M04 reference | _pinned in M04_run3_ | ~43.34 | _see M04_ | split-safe aligned-only |
-| M05 control | `outputs/m05_t5_control_aligned` | _pending_ | _pending_ | 3-epoch replication |
-| M05 augmented | `outputs/m05_t5_augmented` | _pending_ | _pending_ | expanded CSV |
+| M04 reference | `M04_run3` / notes | ~43.34 | _see M04_ | historical split-safe aligned-only |
+| M05 control | `outputs/m05_t5_control_aligned` | _pending_ | _pending_ | 3-epoch, same env as augmented |
+| M05 augmented | `outputs/m05_t5_augmented` | _pending_ | _pending_ | expanded CSV (542 rows) |
+
+---
+
+## Interpretation (fill after GPU runs)
+
+Answer after both evals complete:
+
+1. **Pinned M04 baseline (~43.34):** Did augmented chrF **>** ~43.34?
+2. **Same-run control:** Did augmented chrF **>** control chrF? (Catches env / training variance.)
+3. **Augmentation types:** See Run 1 — `direct_aid_strict` 236; `expanded_partial_prefix` 296; `expanded_partial_prefix_relaxed` 8; `expanded_english_resplit` 2.
+4. **Readout:** Real gain vs neutral vs regression?
+
+### Success criteria (locked)
+
+| Outcome | Condition |
+|---------|-----------|
+| **M05 fails** | augmented ≤ control **or** augmented ≤ ~43.34 |
+| **M05 minimum success** | augmented **>** ~43.34 **and** augmented **>** control |
+| **Strong success** | augmented **≥** 45 **and** clearly above control |
+| **Exceptional** | augmented **≥** 47 |
+
+---
+
+## Decision labeling (after GPU metrics exist)
+
+Pick **one** when the table is filled:
+
+* `M05 success candidate — augmented beats baseline and control`
+* `M05 neutral — augmented does not clearly beat control`
+* `M05 regression — augmentation hurts`
+
+**Current (pre-GPU):** **`M05 decision pending — training/eval not executed (CUDA unavailable in builder session).`**
 
 ---
 
