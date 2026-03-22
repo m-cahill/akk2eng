@@ -174,6 +174,15 @@ python -m akk2eng.pipeline.align --split-safe
 python -m akk2eng.pipeline.augment --split-safe
 ```
 
+**M06 — precision-preserving selection (gated Policy A / B CSVs):**
+
+```bash
+# Requires split-safe augmented_train_sentences.csv + data/splits/dev_split.csv
+python -m akk2eng.pipeline.select_train
+```
+
+Writes `data/derived/selection/strict_plus_highconf_cap50*.csv` + JSON reports (gitignored). Local **3-run GPU** matrix: **`docs/milestones/M06/M06_local_gpu_execution.md`**.
+
 Milestone-grade **3-epoch GPU** control + augmented train and dev eval (CUDA required): see **`docs/milestones/M05/M05_local_gpu_execution.md`**.
 
 **M04 — continue fine-tuning from `outputs/m01_t5`:**

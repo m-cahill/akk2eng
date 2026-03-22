@@ -1,0 +1,5 @@
+sentence_id,oare_id,transliteration,translation,line_start,line_end,alignment_method,alignment_confidence,augmentation_type,augmentation_confidence,source_row_id
+s1,t-1,a,a,1,1,strict,1.0,direct_aid_strict,1.0,t-1
+s2,t-2,b,b,1,1,strict,1.0,direct_aid_strict,1.0,t-2
+s3,t-3,c,c,1,1,expand,0.9,expanded_partial_prefix,0.95,z3
+s4,t-4,d,d,1,1,expand,0.9,expanded_english_resplit,0.95,z4

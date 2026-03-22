@@ -63,3 +63,11 @@ DEFAULT_MIXED_TRAIN_STATS_JSON = DEFAULT_ALIGNMENT_OUTPUT_DIR / "mixed_train_sta
 DEFAULT_AUGMENTATION_OUTPUT_DIR = Path("data") / "derived" / "augmentation"
 DEFAULT_AUGMENTED_TRAIN_CSV = DEFAULT_AUGMENTATION_OUTPUT_DIR / "augmented_train_sentences.csv"
 DEFAULT_AUGMENTATION_REPORT_JSON = DEFAULT_AUGMENTATION_OUTPUT_DIR / "augmentation_report.json"
+
+# M06: gated selection outputs (under data/; gitignored)
+DEFAULT_SELECTION_OUTPUT_DIR = Path("data") / "derived" / "selection"
+_SEL = DEFAULT_SELECTION_OUTPUT_DIR
+DEFAULT_POLICY_A_TRAIN_CSV = _SEL / "strict_plus_highconf_cap50.csv"
+DEFAULT_POLICY_B_TRAIN_CSV = _SEL / "strict_plus_highconf_cap50_weighted2x.csv"
+DEFAULT_POLICY_A_REPORT_JSON = _SEL / "strict_plus_highconf_cap50_report.json"
+DEFAULT_POLICY_B_REPORT_JSON = _SEL / "strict_plus_highconf_cap50_weighted2x_report.json"
