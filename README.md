@@ -174,6 +174,8 @@ python -m akk2eng.pipeline.align --split-safe
 python -m akk2eng.pipeline.augment --split-safe
 ```
 
+Milestone-grade **3-epoch GPU** control + augmented train and dev eval (CUDA required): see **`docs/milestones/M05/M05_local_gpu_execution.md`**.
+
 **M04 — continue fine-tuning from `outputs/m01_t5`:**
 
 ```bash

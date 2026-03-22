@@ -11,6 +11,7 @@
 | 2026-03-22T18:00:00Z | `python -m akk2eng.pipeline.augment --split-safe` | Built `augmented_train_sentences.csv` (542 rows, sha256 in `M05_run1`); dev overlap 0; CUDA false → no GPU train/eval in session. |
 | 2026-03-22T20:00:00Z | CUDA check | `torch.cuda.is_available()` False — M05 GPU train/eval **not started**; `M05_run2` updated with explicit eval `--output-dir` / `--experiments-dir` commands; decision label remains pending local GPU. |
 | 2026-03-22T21:00:00Z | write | Added `M05_local_gpu_execution.md` (local RTX/CUDA runbook); linked from `M05_run2` + `M05_plan.md`. |
+| 2026-03-22T22:00:00Z | README | Link M05 section → `M05_local_gpu_execution.md` for CUDA train/eval; pytest + ruff green. |
 
 ## Copy-paste anchors
 
