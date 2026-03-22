@@ -269,6 +269,21 @@ def _pair_eng_to_akk(
     return None, "count_mismatch", 0.0
 
 
+def align_document_sentences_strict(
+    oare_id: str,
+    transliteration: str,
+    translation: str,
+    sorted_aid: pd.DataFrame,
+) -> tuple[list[dict[str, Any]] | None, str, float]:
+    """M04/M05: strict per-document alignment (public wrapper for tooling/tests)."""
+    return _rows_for_doc(oare_id, transliteration, translation, sorted_aid)
+
+
+def tokenize_transliteration_text(text: str) -> list[str]:
+    """Tokenize competition transliteration for anchor search (M05 expansion)."""
+    return _tokenize_transliteration(text)
+
+
 def _rows_for_doc(
     oare_id: str,
     transliteration: str,

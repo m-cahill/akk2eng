@@ -5,6 +5,9 @@
 | Timestamp (UTC) | Action | Result / notes |
 |-----------------|--------|----------------|
 | 2026-03-22T00:00:00Z | Seed | Folder and plan stub created at M04 closeout (`v0.0.7-m04`). **No implementation yet.** |
+| 2026-03-22T12:00:00Z | git | `git checkout -b m05-data-augmentation` — start M05 implementation. |
+| 2026-03-22T12:00:00Z | write | Replace `M05_plan.md`, add `augmentation.py`, `pipeline/augment.py`, config, tests, run docs. |
+| 2026-03-22T14:30:00Z | pytest / ruff | `pytest tests -q`, `ruff check src tests` — green after M05 implementation. |
 
 ## Copy-paste anchors
 

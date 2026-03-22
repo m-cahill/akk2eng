@@ -167,6 +167,13 @@ python -m akk2eng.pipeline.mix_train
 python -m akk2eng.pipeline.align --split-safe
 ```
 
+**M05 — alignment expansion (split-safe augmented sentence CSV):**
+
+```bash
+# Build augmented_train_sentences.csv + augmentation_report.json (gitignored under data/derived/augmentation/)
+python -m akk2eng.pipeline.augment --split-safe
+```
+
 **M04 — continue fine-tuning from `outputs/m01_t5`:**
 
 ```bash

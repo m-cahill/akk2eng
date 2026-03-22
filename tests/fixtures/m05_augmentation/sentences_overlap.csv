@@ -1,0 +1,2 @@
+display_name,text_uuid,sentence_uuid,sentence_obj_in_text,translation,first_word_transcription,first_word_spelling,first_word_number,first_word_obj_in_text,line_number,side,column
+t,train-doc,s1,1,T.,aa,,1,1,1.0,1,1

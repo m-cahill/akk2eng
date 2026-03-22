@@ -58,3 +58,8 @@ DEFAULT_ALIGNED_TRAIN_SPLIT_CSV = DEFAULT_ALIGNMENT_OUTPUT_DIR / "aligned_train_
 DEFAULT_ALIGNMENT_REPORT_SPLIT_JSON = DEFAULT_ALIGNMENT_OUTPUT_DIR / "alignment_report_split.json"
 DEFAULT_MIXED_TRAIN_CSV = DEFAULT_ALIGNMENT_OUTPUT_DIR / "mixed_train.csv"
 DEFAULT_MIXED_TRAIN_STATS_JSON = DEFAULT_ALIGNMENT_OUTPUT_DIR / "mixed_train_stats.json"
+
+# M05: split-safe augmented / expanded alignment (under data/; gitignored)
+DEFAULT_AUGMENTATION_OUTPUT_DIR = Path("data") / "derived" / "augmentation"
+DEFAULT_AUGMENTED_TRAIN_CSV = DEFAULT_AUGMENTATION_OUTPUT_DIR / "augmented_train_sentences.csv"
+DEFAULT_AUGMENTATION_REPORT_JSON = DEFAULT_AUGMENTATION_OUTPUT_DIR / "augmentation_report.json"
