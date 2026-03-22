@@ -3,6 +3,8 @@
 **Objective:** Isolate **beam search** (`num_beams=3`) vs **greedy** (`num_beams=1`) with identical repetition controls, for Kaggle / BLEU-style alignment.  
 **Scope:** Local only — **no** Kaggle notebook edits, **no** submit from this task.
 
+**Repo commit:** `79885df` (implements `DECODE_NUM_BEAMS` + eval artifact fix).
+
 ## Isolation
 
 | Variant | `num_beams` | `repetition_penalty` | `no_repeat_ngram_size` |
