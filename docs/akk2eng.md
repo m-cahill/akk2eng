@@ -55,7 +55,8 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 |----|---------|--------|
 | **M00** | Kaggle-ready foundation + dummy pipeline + minimal CI + notebook stub + validated Kaggle submission | ✅ Complete (validated) |
 | **M01** | Baseline model + first non-zero Kaggle score | ✅ Complete (`M01_plan.md`, `M01_audit.md`, `M01_summary.md`; tag `v0.0.4-m01c`) |
-| **M02** | Evaluation + fast leaderboard climb | 🚧 In progress (`docs/milestones/M02/M02_plan.md`) |
+| **M02** | Evaluation + targeted improvement loop | ✅ Complete (`M02_summary.md`, `M02_audit.md`; tag `v0.0.5-m02`) |
+| **M03** | Normalization engine | 🚧 Next (`docs/milestones/M03/M03_plan.md`) |
 
 ## M01 scope (baseline model)
 
@@ -70,7 +71,7 @@ M01 introduces the first real translation logic:
 
 ### M01 sub-phases (execution)
 
-**M01 closed** (`v0.0.4-m01c`). Active work continues at **M02** per roadmap.
+**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). Active work continues at **M03** per roadmap.
 
 | Sub-phase | Status | Intent |
 |-----------|--------|--------|
@@ -84,15 +85,25 @@ Bring-up uses **conservative FP32** in the GPU probe path; full training can use
 - `pyproject.toml` pins **`numpy` 1.x** (`>=1.26,<2`) for compatibility with the PyTorch + `accelerate` / `Trainer` stack; do not upgrade to NumPy 2.x for this milestone without re-validating training.
 - **Blackwell GPUs** (`sm_120`, e.g. RTX 5090) need a PyTorch build compiled with CUDA 12.8+ (e.g. `2.10+cu128`). This is a **required local substrate choice** for M01-A GPU validation on Blackwell; CI stays on CPU-safe PyPI wheels. The repo pin (`torch>=2.4`) has no upper bound so both tracks satisfy the declared dependency. Install the correct wheel via `--index-url .../cu128` (see `README.md`). `gpu_bringup` detects arch mismatches and prints an actionable error.
 
-## M02 scope (evaluation + fast leaderboard climb)
+## M02 scope (evaluation + targeted improvement loop)
 
-**Active milestone.** M01 baseline (public LB **11.9**) is frozen; M02 improves score through **measurement-first** iteration.
+**Closed** (`v0.0.5-m02`). M01 baseline (public LB **11.9**) is frozen; M02 delivered **measurement-first** iteration, decoding experiments, and lexicon validation. **Closeout:** `docs/milestones/M02/M02_summary.md`, `docs/milestones/M02/M02_audit.md`.
 
 - **Dev decoding (M02-C / C.2 / C.3):** `config.py` sets `repetition_penalty=1.1`, `no_repeat_ngram_size=3`, and **`num_beams=3`** (M02-C.3 beam experiment; see `docs/milestones/M02/M02_run3_local_beam.md`). Eval artifacts record full `decoding` dict. Greedy@1.1 archive: `M02_run2_local_refinement.md`; penalty 1.2 step: `M02_run1_m02c_decoding.md`. **Kaggle notebook:** must match repo decode (including **`num_beams`**). Submit log: `docs/milestones/M02/M02_run2_kaggle.md`.
 - **Lexicon post-process (M02-D):** `USE_LEXICON`, `DEFAULT_LEXICON_CSV`, `LEXICON_MAX_ENTRIES` in `config.py`; applied in `run_inference()` **only to model outputs** (train-filtered `form→lexeme`, boundary-safe regex). CLI: `--no-lexicon`, `--lexicon-csv`, `--lexicon-train-csv`, `--lexicon-max-entries` on `pipeline.eval`; `pipeline.run` supports `--no-lexicon` / lexicon overrides. See `docs/milestones/M02/M02_run4_lexicon.md`.
-- **Plan:** `docs/milestones/M02/M02_plan.md` — dev eval harness, error buckets, targeted fixes (normalization preview, lexicon injection, decoding), re-submit only on proven deltas.  
+- **Plan (charter):** `docs/milestones/M02/M02_plan.md`  
 - **Tool log:** `docs/milestones/M02/M02_toolcalls.md`.  
 - **Strategy mirror:** `docs/milestones/M01/M01_run3.md` (section **Next: M02**).
+
+### M02 Closeout
+
+- Dev metric (chrF) improved significantly via decoding controls (e.g. **18.65 → 42.82** peak greedy@1.1 on the frozen dev split; beam tradeoffs in `M02_run3_local_beam.md`).
+- Kaggle leaderboard plateaued at **~11.6–11.9** (decode-only work did not establish a sustained public beat over **11.9**).
+- Lexicon injection **validated** but **inactive on dev** in practice (no standalone matching forms in dev English predictions; **0/156** rows changed vs beam baseline in `M02_run4_lexicon.md`); pipeline remains on for future leakage.
+- Decoding space **exhausted** for material gains without **data / normalization** improvements.
+
+**Conclusion:**  
+M02 complete. Next gains require normalization + data pipeline improvements (**M03**).
 
 ### M02 Evaluation Contract
 
@@ -118,15 +129,15 @@ Stored under `outputs/experiments/exp_<timestamp>/` (and mirrored under `outputs
 
 Submissions are only allowed when **dev chrF improves** over the previous best (see `M02_plan.md` guardrails). Each submit is logged (e.g. `docs/milestones/M02/M02_runX.md`).
 
-**Exit:** scripted dev metric + at least one Kaggle submit **> 11.9** with audit trail (then M03/M06 per roadmap).
+**M02 outcome:** dev harness and decoding experiments delivered large **chrF** improvements locally; public LB remained in the **~11.6–11.9** band — **M03** targets normalization and data quality to break the plateau. *(Original stretch exit — scripted dev metric + Kaggle **> 11.9** — carries forward as **M03 exit** alongside dev chrF.)*
 
 ## Planned milestone roadmap
 
 | ID | Focus |
 |----|--------|
 | M01 | Baseline model (first score) |
-| M02 | Evaluation + targeted improvement loop |
-| M03 | Normalization engine |
+| M02 | Evaluation + targeted improvement loop (✅ closed) |
+| M03 | Normalization engine (🚧 next) |
 | M04 | Sentence alignment |
 | M05 | Data augmentation |
 | M06 | Lexicon integration |
@@ -162,6 +173,7 @@ M00 proved this dual path with a dummy model; M01 and later milestones keep the 
 |-----------|--------|
 | M00 | 0.0 |
 | M01 | 11.9 |
+| M02 | ~11.6–11.9 (public LB band; see `M02_summary.md`) |
 
 Run log: `docs/milestones/M01/M01_run3.md` (public leaderboard; private LB may differ at competition end).
 
@@ -200,6 +212,7 @@ Full CI rigor (coverage gates, security scanning, reproducibility enforcement) d
 | v0.0.2-m01a | GPU substrate validated (RTX 5090 / Blackwell, CUDA 12.8); M01-A closed |
 | v0.0.3-m01b | Baseline model trained (T5-small), checkpoint + hash + local inference verified; M01-B closed |
 | v0.0.4-m01c | Kaggle submission with fine-tuned baseline; public leaderboard 11.9; M01 complete |
+| v0.0.5-m02 | M02 complete — evaluation harness, error analysis, decoding optimization, lexicon validation |
 
 ## Related governance docs
 

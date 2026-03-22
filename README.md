@@ -214,7 +214,9 @@ pytest
 - M00 plan: `docs/milestones/M00/M00_plan.md`
 - M01 plan: `docs/milestones/M01/M01_plan.md`
 - M01 audit / summary: `docs/milestones/M01/M01_audit.md`, `docs/milestones/M01/M01_summary.md`
-- M02 plan (fast leaderboard climb): `docs/milestones/M02/M02_plan.md`
+- M02 plan: `docs/milestones/M02/M02_plan.md`
+- M02 closeout (summary / audit, tag `v0.0.5-m02`): `docs/milestones/M02/M02_summary.md`, `docs/milestones/M02/M02_audit.md`
+- M03 plan (normalization engine): `docs/milestones/M03/M03_plan.md`
 - M01 GPU substrate run log: `docs/milestones/M01/M01_run1.md`
 - M01 full training run log: `docs/milestones/M01/M01_run2.md`
 - M01-C Kaggle checklist: `docs/milestones/M01/M01C_checklist.md`
