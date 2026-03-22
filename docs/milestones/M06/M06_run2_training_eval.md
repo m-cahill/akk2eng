@@ -9,51 +9,51 @@
 
 ## Preconditions
 
-- [ ] `M06_run1_policy_builder.md` complete: Policy A/B CSVs + reports on disk, `dev_overlap_oare_ids == 0`
-- [ ] Policy parameters **frozen** — no threshold/cap tuning after seeing metrics
+- [x] `M06_run1_policy_builder.md` complete: Policy A/B CSVs + reports on disk, `dev_overlap_oare_ids == 0`
+- [x] Policy parameters **frozen** — no threshold/cap tuning after seeing metrics
 
 ---
 
-## Results (paste after GPU runs)
+## Results (locked — M06 closeout)
 
 Eval contract: same as M02/M04/M05 (frozen dev split, continuation from `outputs/m01_t5`, **3 epochs**, `--fp32`).
 
 | Run | `train-csv` | chrF | BLEU | Notes |
 |-----|---------------|------|------|--------|
-| **Control** | `data/derived/alignment/aligned_train_sentences_split.csv` | | | same-run comparator |
-| **Policy A** | `data/derived/selection/strict_plus_highconf_cap50.csv` | | | |
-| **Policy B** | `data/derived/selection/strict_plus_highconf_cap50_weighted2x.csv` | | | |
+| **Control** | `data/derived/alignment/aligned_train_sentences_split.csv` | **45.3584** | *(see local `metrics.json`)* | same-run comparator |
+| **Policy A** | `data/derived/selection/strict_plus_highconf_cap50.csv` | **52.2530** | *(see local `metrics.json`)* | gated + cap |
+| **Policy B** | `data/derived/selection/strict_plus_highconf_cap50_weighted2x.csv` | **25.4027** | *(see local `metrics.json`)* | 2× strict weighting — **regression** |
 
-**Paths to metrics:** `outputs/eval_m06_control/metrics.json`, `outputs/eval_m06_policy_a/metrics.json`, `outputs/eval_m06_policy_b/metrics.json` (or as adjusted locally — keep one canonical mapping here after the run).
+**Paths to metrics (canonical):** `outputs/eval_m06_control/metrics.json`, `outputs/eval_m06_policy_a/metrics.json`, `outputs/eval_m06_policy_b/metrics.json`.
 
 ---
 
-## Decision (locked label — pick exactly one)
+## Locked paste-back (audit)
 
-Reference pin: **45.3584** chrF (M05 control). Same-run control is the primary comparator. Noise band: **±0.5** chrF.
+```text
+Control chrF: 45.3584
+Policy A chrF: 52.2530
+Policy B chrF: 25.4027
+Best Δ vs control: +6.8946
+Decision: M06 success candidate — quality-gated expansion beats control
+```
+
+**Success vs plan:** Policy A beats same-run control by **+6.8946 chrF** (> **+0.5** band) and beats the prior pin **45.3584 chrF**. **Decision label:** success candidate.
+
+---
+
+## Decision (locked label)
 
 **Chosen label:**
 
 ```text
-(paste one of the three labels from M06_plan.md §9)
+M06 success candidate — quality-gated expansion beats control
 ```
 
-**Rationale (short):**
-
----
-
-## Paste-back template (for chat / audit)
-
-```text
-Control chrF:
-Policy A chrF:
-Policy B chrF:
-Best Δ vs control:
-Decision:
-```
+**Rationale (short):** Only **two** high-confidence expansion rows passed Policy A gates; adding them to **236** strict rows improved dev chrF materially. Policy B duplicated strict supervision without adding signal and correlated with **collapse** (~25 chrF), showing that **dilution / reweighting** can reintroduce harm even when row identity matches Policy A.
 
 ---
 
 ## Submission
 
-Per plan: **no** `M06_run3_kaggle_submit.md` unless a candidate clears the **success candidate** gate in §9 of `M06_plan.md`.
+Kaggle submit runbook: [M06_run3_kaggle_submit.md](M06_run3_kaggle_submit.md) (authorized after success-candidate gate).
