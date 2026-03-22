@@ -31,4 +31,4 @@ Define and prototype one or more **documented, deterministic** augmentation path
 
 * Prior milestone closeout: [../M04/M04_summary.md](../M04/M04_summary.md)
 * Tool log (to be filled): [M05_toolcalls.md](M05_toolcalls.md)
-* Roadmap: [`docs/akk2eng.md`](../../akk2eng.md)
+* Roadmap: [../../akk2eng.md](../../akk2eng.md) (`docs/akk2eng.md`)
