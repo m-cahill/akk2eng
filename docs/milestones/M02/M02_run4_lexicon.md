@@ -3,7 +3,7 @@
 **Objective:** Surgical **English prediction** cleanup: replace leaked Akkadian surfaces (logograms, copy-through tokens) using **eBL `form` → `lexeme`** only, with **train-filtered** entries and **token-boundary-safe** regex.  
 **Scope:** Repo inference/eval path only — **no** tokenizer / training / input changes; **no** Kaggle notebook edit in this task.
 
-**Repo commit:** `de26161`.
+**Repo commit:** `87cb87f`.
 
 ## Design (locked)
 
