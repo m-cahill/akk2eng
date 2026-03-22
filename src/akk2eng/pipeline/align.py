@@ -3,16 +3,26 @@
 from __future__ import annotations
 
 import argparse
+import json
+import sys
 from pathlib import Path
 
 from akk2eng.config import (
     DEFAULT_ALIGNED_TRAIN_CSV,
+    DEFAULT_ALIGNED_TRAIN_SPLIT_CSV,
     DEFAULT_ALIGNMENT_OUTPUT_DIR,
     DEFAULT_ALIGNMENT_REPORT_JSON,
+    DEFAULT_ALIGNMENT_REPORT_SPLIT_JSON,
+    DEFAULT_DEV_SPLIT_CSV,
     DEFAULT_SENTENCES_AID_CSV,
     DEFAULT_TRAIN_CSV,
+    DEFAULT_TRAIN_SPLIT_CSV,
 )
-from akk2eng.data.alignment import build_aligned_training_csv, write_baseline_alignment_audit
+from akk2eng.data.alignment import (
+    build_aligned_training_csv,
+    verify_aligned_no_dev_oare_overlap,
+    write_baseline_alignment_audit,
+)
 
 
 def main() -> None:
@@ -23,7 +33,27 @@ def main() -> None:
         "--train-csv",
         type=Path,
         default=DEFAULT_TRAIN_CSV,
-        help=f"Official train.csv (default: {DEFAULT_TRAIN_CSV})",
+        help=(
+            "Training-side document CSV for alignment (use "
+            f"{DEFAULT_TRAIN_SPLIT_CSV} for leak-safe M04; default: {DEFAULT_TRAIN_CSV})"
+        ),
+    )
+    parser.add_argument(
+        "--split-safe",
+        action="store_true",
+        help=(
+            "Use persisted train split only + write aligned_train_sentences_split.csv "
+            "and alignment_report_split.json; verify zero oare_id overlap vs dev split"
+        ),
+    )
+    parser.add_argument(
+        "--verify-dev-split-csv",
+        type=Path,
+        default=None,
+        help=(
+            "After build, verify no oare_id overlap with this dev split "
+            f"(default with --split-safe: {DEFAULT_DEV_SPLIT_CSV})"
+        ),
     )
     parser.add_argument(
         "--sentences-aid-csv",
@@ -65,13 +95,18 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    train_input = DEFAULT_TRAIN_SPLIT_CSV if args.split_safe else args.train_csv
     out_dir = args.output_dir
-    aligned = args.aligned_csv or (out_dir / "aligned_train_sentences.csv")
-    report = args.report_json or (out_dir / "alignment_report.json")
+    if args.split_safe:
+        aligned = args.aligned_csv or DEFAULT_ALIGNED_TRAIN_SPLIT_CSV
+        report = args.report_json or DEFAULT_ALIGNMENT_REPORT_SPLIT_JSON
+    else:
+        aligned = args.aligned_csv or (out_dir / "aligned_train_sentences.csv")
+        report = args.report_json or (out_dir / "alignment_report.json")
 
     if args.audit_only:
         audit = write_baseline_alignment_audit(
-            args.train_csv,
+            train_input,
             args.sentences_aid_csv,
             args.audit_output,
         )
@@ -80,16 +115,30 @@ def main() -> None:
         return
 
     rep = build_aligned_training_csv(
-        args.train_csv,
+        train_input,
         args.sentences_aid_csv,
         aligned,
         report,
     )
+    print("Train input:", train_input.resolve())
     print("Aligned CSV:", aligned.resolve())
     print("Report:", report.resolve())
     print("docs_aligned:", rep.docs_aligned, "/", rep.docs_processed)
     print("sentence_pairs:", rep.sentence_pairs)
     print("aligned_csv_sha256:", rep.aligned_csv_sha256)
+
+    dev_verify = args.verify_dev_split_csv
+    if args.split_safe and dev_verify is None:
+        dev_verify = DEFAULT_DEV_SPLIT_CSV
+    if dev_verify is not None:
+        check = verify_aligned_no_dev_oare_overlap(aligned, dev_verify)
+        print("Dev overlap check:", json.dumps(check, indent=2))
+        if not check["passes"]:
+            print(
+                "ERROR: aligned output shares oare_id with dev split — leakage risk.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
 
 if __name__ == "__main__":

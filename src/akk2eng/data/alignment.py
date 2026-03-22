@@ -437,3 +437,34 @@ def write_baseline_alignment_audit(
     output_json.parent.mkdir(parents=True, exist_ok=True)
     output_json.write_text(json.dumps(audit, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return audit
+
+
+def verify_aligned_no_dev_oare_overlap(
+    aligned_csv: Path,
+    dev_split_csv: Path,
+) -> dict[str, Any]:
+    """Return overlap stats between ``oare_id`` in aligned output and dev split.
+
+    For leak-safe M04 training, ``passes`` must be True (empty intersection).
+    """
+    aligned = load_csv(aligned_csv)
+    dev = load_csv(dev_split_csv)
+    if COL_OARE_ID not in aligned.columns:
+        msg = f"aligned CSV missing {COL_OARE_ID!r}"
+        raise ValueError(msg)
+    if COL_OARE_ID not in dev.columns:
+        msg = f"dev split CSV missing {COL_OARE_ID!r}"
+        raise ValueError(msg)
+    a_ids = set(aligned[COL_OARE_ID].astype(str).str.strip())
+    d_ids = set(dev[COL_OARE_ID].astype(str).str.strip())
+    inter = a_ids & d_ids
+    sample = sorted(inter)[:50]
+    return {
+        "aligned_csv": str(aligned_csv.as_posix()),
+        "dev_split_csv": str(dev_split_csv.as_posix()),
+        "n_unique_oare_in_aligned": len(a_ids),
+        "n_unique_oare_in_dev": len(d_ids),
+        "n_overlap_oare_ids": len(inter),
+        "overlap_oare_ids_sample": sample,
+        "passes": len(inter) == 0,
+    }

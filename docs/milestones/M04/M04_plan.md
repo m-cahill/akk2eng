@@ -2,9 +2,17 @@
 
 **Milestone:** M04  
 **Title:** Sentence alignment  
-**Status:** Active  
+**Status:** **Closed** (`v0.0.7-m04`)  
 **Baseline tag:** `v0.0.6-m03`  
 **Primary intent:** reduce the train/test granularity mismatch by deriving deterministic, auditable sentence-level training pairs from the official training data, then run bounded training experiments that isolate alignment as the variable.
+
+### As-run exit note (2026-03-22)
+
+- **Shipped:** deterministic alignment engine (`alignment.py`), `pipeline.align`, tests, mixed-train helper, config paths, README / tool log updates.
+- **Leakage remediation:** alignment from full `train.csv` produced **~52.25 chrF** (untrustworthy). **`--split-safe`** + dev `oare_id` overlap check enforced; **0 overlap** on validated run.
+- **Final validated metric:** **~43.34 chrF** vs baseline **~39.8601** → **+3.48 chrF** (same eval contract: beam=3, lex on, norm v2). Documented in [M04_run3_training_eval.md](M04_run3_training_eval.md) and [M04_summary.md](M04_summary.md).
+- **Kaggle:** no submission required for closeout (discipline: validated local gain; optional GPU parity noted in audit).
+- **Closeout artifacts:** [M04_summary.md](M04_summary.md), [M04_audit.md](M04_audit.md); source of truth updated in [`docs/akk2eng.md`](../../akk2eng.md).
 
 ## Why this milestone exists
 

@@ -162,6 +162,9 @@ python -m akk2eng.pipeline.align --audit-only
 
 # Mixed corpus: full train.csv + aligned rows → data/derived/alignment/mixed_train.csv
 python -m akk2eng.pipeline.mix_train
+
+# Leak-safe alignment (train split only + dev overlap check; requires data/splits/*.csv)
+python -m akk2eng.pipeline.align --split-safe
 ```
 
 **M04 — continue fine-tuning from `outputs/m01_t5`:**

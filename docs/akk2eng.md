@@ -57,7 +57,8 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 | **M01** | Baseline model + first non-zero Kaggle score | ✅ Complete (`M01_plan.md`, `M01_audit.md`, `M01_summary.md`; tag `v0.0.4-m01c`) |
 | **M02** | Evaluation + targeted improvement loop | ✅ Complete (`M02_summary.md`, `M02_audit.md`; tag `v0.0.5-m02`) |
 | **M03** | Normalization engine | ✅ Complete (`M03_summary.md`, `M03_audit.md`; tag `v0.0.6-m03`) |
-| **M04** | Sentence alignment | 🚧 Next (`docs/milestones/M04/M04_plan.md`) |
+| **M04** | Sentence alignment | ✅ Complete (`M04_summary.md`, `M04_audit.md`; tag `v0.0.7-m04`) |
+| **M05** | Data augmentation | 🚧 Next (`docs/milestones/M05/M05_plan.md`) |
 
 ## M01 scope (baseline model)
 
@@ -72,7 +73,7 @@ M01 introduces the first real translation logic:
 
 ### M01 sub-phases (execution)
 
-**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). **M03 closed** (`v0.0.6-m03`). Active work continues at **M04** per roadmap.
+**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). **M03 closed** (`v0.0.6-m03`). **M04 closed** (`v0.0.7-m04`). Active work continues at **M05** per roadmap.
 
 | Sub-phase | Status | Intent |
 |-----------|--------|--------|
@@ -149,7 +150,39 @@ Submissions are only allowed when **dev chrF improves** over the previous best (
 
 **Conclusion:**  
 Normalization is validated as a **safe** transformation layer but is **not** a primary optimization lever.  
-Next gains require structural improvements to data alignment (**M04**).
+Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); next roadmap focus is **M05** (data augmentation).
+
+## M04 scope (sentence alignment)
+
+**Closed** (`v0.0.7-m04`). Deterministic sentence-level `(transliteration, translation)` pairs from the official train bundle + `Sentences_Oare_FirstWord_LinNum.csv`, with reports and content hashes. **Closeout:** `docs/milestones/M04/M04_summary.md`, `docs/milestones/M04/M04_audit.md`.
+
+### Pipeline
+
+- **Engine:** `src/akk2eng/data/alignment.py` — line-number parsing (incl. primes / float encodings), conservative English splitting, monotonic pairing, skip-with-reason semantics.
+- **CLI:** `python -m akk2eng.pipeline.align` → `data/derived/alignment/aligned_train_sentences.csv` + `alignment_report.json` (local, gitignored).
+- **Split-safe requirement (honest dev eval):** `python -m akk2eng.pipeline.align --split-safe` reads **`data/splits/train_split.csv` only**, writes `aligned_train_sentences_split.csv` + `alignment_report_split.json`, and **fails** if any aligned `oare_id` appears in **`data/splits/dev_split.csv`**.
+- **Training:** `python -m akk2eng.pipeline.train` supports aligned / mixed CSV paths; continuation from `outputs/m01_t5` documented in M04 run notes.
+- **Mixed corpus:** `python -m akk2eng.pipeline.mix_train` — explored; validated M04 outcome is **split-safe aligned-only** gain, not mixed.
+
+### Derived dataset contract (gitignored)
+
+| Path | Role |
+|------|------|
+| `data/derived/alignment/aligned_train_sentences.csv` | Sentence pairs from **full** `train.csv` (experiments / legacy) |
+| `data/derived/alignment/alignment_report.json` | Full-train alignment report + CSV SHA-256 |
+| `data/derived/alignment/aligned_train_sentences_split.csv` | **Leak-safe** pairs (train split only) |
+| `data/derived/alignment/alignment_report_split.json` | Split-safe report |
+
+### M04 Closeout
+
+- **Baseline** (frozen dev, M01 checkpoint, beam=3, lex on, norm v2): chrF **~39.8601**.
+- **Leakage issue:** alignment from **full** `train.csv` produced **~52.25 chrF** — **invalid** as a generalization estimate because dev documents could contribute to alignment supervision.
+- **Fix:** `--split-safe` + overlap check → **0** shared `oare_id` with dev.
+- **Validated result:** **~43.34 chrF** (**+3.48** vs baseline) on split-safe aligned-only continuation — **trustworthy** under the same evaluation contract.
+- **Thesis:** aligns with `docs/moonshot.md` — **fixing data structure** (sentence alignment) yields measurable gain without model swap.
+
+**Conclusion:**  
+M04 complete. Next roadmap focus: **M05 (data augmentation)** — see `docs/milestones/M05/M05_plan.md`.
 
 ## Planned milestone roadmap
 
@@ -158,8 +191,8 @@ Next gains require structural improvements to data alignment (**M04**).
 | M01 | Baseline model (first score) |
 | M02 | Evaluation + targeted improvement loop (✅ closed) |
 | M03 | Normalization engine (✅ closed) |
-| M04 | Sentence alignment (🚧 next) |
-| M05 | Data augmentation |
+| M04 | Sentence alignment (✅ closed) |
+| M05 | Data augmentation (🚧 next) |
 | M06 | Lexicon integration |
 | M07 | Named entity handling |
 | M08 | Rule-based improvements |
@@ -234,6 +267,7 @@ Full CI rigor (coverage gates, security scanning, reproducibility enforcement) d
 | v0.0.4-m01c | Kaggle submission with fine-tuned baseline; public leaderboard 11.9; M01 complete |
 | v0.0.5-m02 | M02 complete — evaluation harness, error analysis, decoding optimization, lexicon validation |
 | v0.0.6-m03 | M03 complete — normalization engine implemented, validated, stabilized (`NORMALIZATION_VERSION=v2`) |
+| v0.0.7-m04 | M04 complete — sentence alignment implemented, leakage fixed, **+3.48 chrF** validated (split-safe) |
 
 ## Related governance docs
 

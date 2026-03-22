@@ -53,5 +53,8 @@ DEFAULT_SENTENCES_AID_CSV = Path("data") / "Sentences_Oare_FirstWord_LinNum.csv"
 DEFAULT_ALIGNMENT_OUTPUT_DIR = Path("data") / "derived" / "alignment"
 DEFAULT_ALIGNED_TRAIN_CSV = DEFAULT_ALIGNMENT_OUTPUT_DIR / "aligned_train_sentences.csv"
 DEFAULT_ALIGNMENT_REPORT_JSON = DEFAULT_ALIGNMENT_OUTPUT_DIR / "alignment_report.json"
+# M04 leak-safe: align only persisted train split (never full train.csv for training/eval parity).
+DEFAULT_ALIGNED_TRAIN_SPLIT_CSV = DEFAULT_ALIGNMENT_OUTPUT_DIR / "aligned_train_sentences_split.csv"
+DEFAULT_ALIGNMENT_REPORT_SPLIT_JSON = DEFAULT_ALIGNMENT_OUTPUT_DIR / "alignment_report_split.json"
 DEFAULT_MIXED_TRAIN_CSV = DEFAULT_ALIGNMENT_OUTPUT_DIR / "mixed_train.csv"
 DEFAULT_MIXED_TRAIN_STATS_JSON = DEFAULT_ALIGNMENT_OUTPUT_DIR / "mixed_train_stats.json"
