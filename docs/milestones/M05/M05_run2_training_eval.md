@@ -5,32 +5,19 @@
 
 ---
 
-## Execution status (this session)
+## Execution status
 
 | Phase | Status |
 |--------|--------|
-| Augmentation builder (`--split-safe`) | **Done** — see [M05_run1_augmentation_builder.md](M05_run1_augmentation_builder.md) |
-| Control + augmented **3-epoch GPU** train | **Not run here** — `torch.cuda.is_available()` was **False** in the execution environment |
-| Eval on `m05_t5_*` checkpoints | **Pending** — requires local GPU training first |
+| Augmentation builder (`--split-safe`) | **Done** — [M05_run1_augmentation_builder.md](M05_run1_augmentation_builder.md) |
+| Control + augmented **3-epoch GPU** train | **Blocked in Cursor/cloud sessions** — `torch.cuda.is_available()` **False** (verified again on GPU execution prompt) |
+| Eval on `m05_t5_*` checkpoints | **Pending** — requires checkpoints from local GPU training |
 
-**Milestone-grade chrF numbers below are intentionally unfilled until you run train + eval on CUDA** (e.g. RTX 5090 / cu128 per `docs/akk2eng.md`). Do **not** treat long CPU runs as the milestone comparison surface.
+**Milestone-grade chrF must come from your machine** (e.g. RTX 5090 / cu128). Do **not** use long CPU training as the comparison surface.
 
 ---
 
-## Training (3 epochs — milestone comparison)
-
-**Augmented continuation fine-tune:**
-
-```bash
-python -m akk2eng.pipeline.train \
-  --train-csv data/derived/augmentation/augmented_train_sentences.csv \
-  --resume-model-dir outputs/m01_t5 \
-  --output-dir outputs/m05_t5_augmented \
-  --device cuda --fp32 \
-  --epochs 3
-```
-
-**Control (same-run aligned-only):** train on split-safe aligned CSV only (M04 path):
+## Step 1 — Control training (GPU, run first)
 
 ```bash
 python -m akk2eng.pipeline.train \
@@ -41,62 +28,100 @@ python -m akk2eng.pipeline.train \
   --epochs 3
 ```
 
-> Run **control first**, then **augmented**, without changing augmentation code between the builder run and training.
-
 ---
 
-## Evaluation
-
-Same contract as M04 (frozen dev, beam=3, lexicon on, normalization v2):
+## Step 2 — Augmented training (GPU)
 
 ```bash
-python -m akk2eng.pipeline.eval --model-dir outputs/m05_t5_control_aligned
-python -m akk2eng.pipeline.eval --model-dir outputs/m05_t5_augmented
+python -m akk2eng.pipeline.train \
+  --train-csv data/derived/augmentation/augmented_train_sentences.csv \
+  --resume-model-dir outputs/m01_t5 \
+  --output-dir outputs/m05_t5_augmented \
+  --device cuda --fp32 \
+  --epochs 3
 ```
-
-(Mirror any extra flags used in `docs/milestones/M04/M04_run3_training_eval.md` if your local harness differs from defaults.)
 
 ---
 
-## Results table (fill after GPU runs)
+## Step 3 — Evaluate both (separate eval + experiment dirs)
+
+```bash
+python -m akk2eng.pipeline.eval \
+  --model-dir outputs/m05_t5_control_aligned \
+  --output-dir outputs/eval_m05_control \
+  --experiments-dir outputs/experiments_m05_control
+
+python -m akk2eng.pipeline.eval \
+  --model-dir outputs/m05_t5_augmented \
+  --output-dir outputs/eval_m05_augmented \
+  --experiments-dir outputs/experiments_m05_augmented
+```
+
+Metrics: read `outputs/eval_m05_control/metrics.json` and `outputs/eval_m05_augmented/metrics.json` (or the latest `exp_*` snapshot under each `experiments_*` dir).
+
+---
+
+## Results table (fill after local GPU runs)
+
+| Run | chrF | BLEU |
+|-----|------|------|
+| M05 control | _pending_ | _pending_ |
+| M05 augmented | _pending_ | _pending_ |
+| M04 baseline | ~43.34 | — (see M04 run notes) |
+
+### Extended (optional)
 
 | Run | `model_dir` | chrF | BLEU | Notes |
 |-----|-------------|------|------|--------|
-| M04 reference | `M04_run3` / notes | ~43.34 | _see M04_ | historical split-safe aligned-only |
-| M05 control | `outputs/m05_t5_control_aligned` | _pending_ | _pending_ | 3-epoch, same env as augmented |
-| M05 augmented | `outputs/m05_t5_augmented` | _pending_ | _pending_ | expanded CSV (542 rows) |
+| M05 control | `outputs/m05_t5_control_aligned` | _pending_ | _pending_ | 3-epoch aligned-only |
+| M05 augmented | `outputs/m05_t5_augmented` | _pending_ | _pending_ | 542-row augmented CSV |
 
 ---
 
 ## Interpretation (fill after GPU runs)
 
-Answer after both evals complete:
+Answer **all** after both evals complete:
 
-1. **Pinned M04 baseline (~43.34):** Did augmented chrF **>** ~43.34?
-2. **Same-run control:** Did augmented chrF **>** control chrF? (Catches env / training variance.)
-3. **Augmentation types:** See Run 1 — `direct_aid_strict` 236; `expanded_partial_prefix` 296; `expanded_partial_prefix_relaxed` 8; `expanded_english_resplit` 2.
-4. **Readout:** Real gain vs neutral vs regression?
+1. Did augmented beat **M04 baseline (~43.34)**?
+2. Did augmented beat **M05 control**?
+3. **Δ vs control** = augmented chrF − control chrF = _pending_
+4. **Augmentation types** (from Run 1 builder): `direct_aid_strict` 236; `expanded_partial_prefix` 296; `expanded_partial_prefix_relaxed` 8; `expanded_english_resplit` 2.
+5. **Readout:** real improvement vs neutral vs regression? (be explicit and conservative.)
 
 ### Success criteria (locked)
 
 | Outcome | Condition |
 |---------|-----------|
-| **M05 fails** | augmented ≤ control **or** augmented ≤ ~43.34 |
-| **M05 minimum success** | augmented **>** ~43.34 **and** augmented **>** control |
-| **Strong success** | augmented **≥** 45 **and** clearly above control |
-| **Exceptional** | augmented **≥** 47 |
+| **FAIL** | augmented ≤ control **or** augmented ≤ ~43.34 |
+| **SUCCESS** | augmented **>** ~43.34 **and** augmented **>** control |
+| **STRONG** | augmented **≥** 45 |
+| **EXCEPTIONAL** | augmented **≥** 47 |
 
 ---
 
-## Decision labeling (after GPU metrics exist)
+## Decision label (REQUIRED after measurement)
 
-Pick **one** when the table is filled:
+Choose **exactly one** once the results table is filled from **local** GPU eval:
 
 * `M05 success candidate — augmented beats baseline and control`
 * `M05 neutral — augmented does not clearly beat control`
 * `M05 regression — augmentation hurts`
 
-**Current (pre-GPU):** **`M05 decision pending — training/eval not executed (CUDA unavailable in builder session).`**
+**Until then:**
+
+```text
+M05 decision pending — GPU training/eval not executed in this environment (CUDA unavailable); run Steps 1–3 locally and assign one label above from measured chrF.
+```
+
+---
+
+## Expected artifacts (after local completion)
+
+* `outputs/m05_t5_control_aligned/`
+* `outputs/m05_t5_augmented/`
+* `outputs/eval_m05_control/`
+* `outputs/eval_m05_augmented/`
+* `outputs/experiments_m05_control/` / `outputs/experiments_m05_augmented/`
 
 ---
 
