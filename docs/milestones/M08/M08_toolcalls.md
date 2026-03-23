@@ -13,6 +13,8 @@
 | 2026-03-22T14:40:00Z | verify | `pytest tests`, `ruff check src tests` |
 | 2026-03-22T20:00:00Z | closeout | `M08_summary.md`, `M08_audit.md`, `M08_run2/3`, `docs/akk2eng.md`, M09 seed |
 | 2026-03-22T20:00:01Z | git | Merge `m08-alignment-quality-recovery` → `main`, tag `v0.0.11-m08`, push; monitor CI |
+| 2026-03-23T00:50:00Z | ci | Gate run **green**: `23416637937` @ `64e68d3` (ruff format + sanity `use_lexicon=False` fixes) |
+| 2026-03-23T00:50:01Z | docs | `M08_run3_ci.md` finalized; annotated tag `v0.0.11-m08` on post-closeout `main` |
 
 ## Copy-paste anchors
 
