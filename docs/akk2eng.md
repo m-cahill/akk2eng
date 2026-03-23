@@ -61,7 +61,8 @@ Unzip into `data/` so `data/test.csv` (and optionally `train.csv`, `sample_submi
 | **M05** | Data augmentation | ✅ Complete (`M05_summary.md`, `M05_audit.md`; tag `v0.0.8-m05`) |
 | **M06** | Precision-preserving data expansion | ✅ Complete (`M06_summary.md`, `M06_audit.md`; tag `v0.0.9-m06`) |
 | **M07** | Confidence-driven expansion | ❌ Regression (`M07_summary.md`, `M07_audit.md`; tag `v0.0.10-m07`) |
-| **M08** | Alignment quality / new supervision (seed) | 🚧 Next (`docs/milestones/M08/M08_plan.md`) |
+| **M08** | Alignment-quality recovery | ❌ Regression (`M08_summary.md`, `M08_audit.md`; tag `v0.0.11-m08`) |
+| **M09** | Training dynamics / supervision integration (seed) | 🚧 Next (`docs/milestones/M09/M09_plan.md`) |
 
 ## M01 scope (baseline model)
 
@@ -76,7 +77,7 @@ M01 introduces the first real translation logic:
 
 ### M01 sub-phases (execution)
 
-**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). **M03 closed** (`v0.0.6-m03`). **M04 closed** (`v0.0.7-m04`). **M05 closed** (`v0.0.8-m05`). **M06 closed** (`v0.0.9-m06`). **M07 closed** (`v0.0.10-m07`). Active work continues at **M08** per roadmap.
+**M01 closed** (`v0.0.4-m01c`). **M02 closed** (`v0.0.5-m02`). **M03 closed** (`v0.0.6-m03`). **M04 closed** (`v0.0.7-m04`). **M05 closed** (`v0.0.8-m05`). **M06 closed** (`v0.0.9-m06`). **M07 closed** (`v0.0.10-m07`). **M08 closed** (`v0.0.11-m08`, regression documented). Active work continues at **M09** per roadmap.
 
 | Sub-phase | Status | Intent |
 |-----------|--------|--------|
@@ -153,7 +154,7 @@ Submissions are only allowed when **dev chrF improves** over the previous best (
 
 **Conclusion:**  
 Normalization is validated as a **safe** transformation layer but is **not** a primary optimization lever.  
-Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); **M05** (data augmentation) is ✅ complete (`v0.0.8-m05`); **M06** (precision-preserving expansion) is ✅ complete (`v0.0.9-m06`); **M07** (confidence-driven expansion) is ✅ closed (`v0.0.10-m07`, regression documented); next roadmap focus is **M08** (alignment quality / new supervision).
+Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); **M05** (data augmentation) is ✅ complete (`v0.0.8-m05`); **M06** (precision-preserving expansion) is ✅ complete (`v0.0.9-m06`); **M07** (confidence-driven expansion) is ✅ closed (`v0.0.10-m07`, regression documented); **M08** (alignment-quality recovery) is ✅ closed (`v0.0.11-m08`, regression documented); next roadmap focus is **M09** (training dynamics / supervision integration).
 
 ## M04 scope (sentence alignment)
 
@@ -185,7 +186,7 @@ Structural data alignment was pursued in **M04** (✅ complete, `v0.0.7-m04`); *
 - **Thesis:** aligns with `docs/moonshot.md` — **fixing data structure** (sentence alignment) yields measurable gain without model swap.
 
 **Conclusion:**  
-M04 complete. **M05**, **M06**, and **M07** are closed — see milestone summaries under `docs/milestones/`. Active next: **M08** — `docs/milestones/M08/M08_plan.md`.
+M04 complete. **M05**–**M08** are closed — see milestone summaries under `docs/milestones/`. Active next: **M09** — `docs/milestones/M09/M09_plan.md`.
 
 ## M05 scope (data augmentation / alignment expansion)
 
@@ -266,7 +267,31 @@ The M06 optimum is extremely narrow and fragile; additional expansion reintroduc
 ```
 
 **Conclusion:**  
-M07 complete (negative result). **M08** targets **alignment quality** and **new high-confidence supervision** — not further scoring tweaks on the same pool — `docs/milestones/M08/M08_plan.md`.
+M07 complete (negative result). **M08** tested deterministic alignment-quality repair — **closed as regression** (`v0.0.11-m08`); see `docs/milestones/M08/M08_summary.md`.
+
+## M08 scope (alignment-quality recovery)
+
+**Closed** (`v0.0.11-m08`). Deterministic **`alignment_quality_v2`** repair (`python -m akk2eng.pipeline.align_quality`) on split-safe train inputs: strict M04 rows unchanged, then narrow **`;` / `:`** clause resplit only for **count mismatch** `na == ne + 1` with anchors found — no partial-prefix, relaxed rows, or M05 pool rescoring. **Closeout:** `docs/milestones/M08/M08_summary.md`, `docs/milestones/M08/M08_audit.md`.
+
+### Pipeline
+
+- **Engine:** `src/akk2eng/data/alignment_quality.py` — semicolon/colon resplit, row + document filters, M06 winner union, JSON reports + SHA-256; dev overlap fail-closed.
+- **CLI:** `python -m akk2eng.pipeline.align_quality` → `data/derived/alignment_quality/*.csv` + reports (gitignored).
+- **Training:** locked 3-run matrix vs M06 Policy A baseline rerun; continuation from `outputs/m01_t5`, 3 epochs, `--fp32` (see `M08_local_gpu_execution.md`).
+
+### M08 Closeout (GPU, frozen dev)
+
+- **Baseline (M06 Policy A CSV):** **52.2530** chrF (same-run rerun).
+- **Candidate A (236 strict + 46 repaired pairs):** **20.0045** chrF — **~−32.2 chrF** vs baseline.
+- **Candidate B (A ∪ M06 winners):** **20.0045** chrF — no gain vs A in this run.
+- **Decision:** **M08 regression** — structurally valid recovered rows **reintroduce harmful distribution shift**; **no** Kaggle submission.
+
+```text
+Structural correctness alone is insufficient; recovered rows must match the training distribution or they degrade performance.
+```
+
+**Conclusion:**  
+M08 complete (negative result). **M09** targets **training dynamics**, **curriculum / integration**, and **how supervision is absorbed** — not alignment repair or selection scoring — `docs/milestones/M09/M09_plan.md`.
 
 ## Planned milestone roadmap
 
@@ -279,8 +304,8 @@ M07 complete (negative result). **M08** targets **alignment quality** and **new 
 | M05 | Data augmentation (✅ closed) |
 | M06 | Precision-preserving data expansion (✅ closed) |
 | M07 | Confidence-driven expansion (✅ closed — regression; see `M07_summary.md`) |
-| M08 | Alignment quality / new supervision (🚧 seed — **not** more pool expansion) |
-| M09 | Rule-based improvements |
+| M08 | Alignment-quality recovery (✅ closed — **regression**; see `M08_summary.md`) |
+| M09 | Training dynamics / supervision integration (🚧 seed) |
 | M10 | Model upgrade |
 | M11 | Training stabilization |
 | M12 | Post-processing |
@@ -309,6 +334,7 @@ Documented **negative results** and **positive controls** are part of the system
 | **M05** | Unweighted mix of strict + **partial-prefix** expansion (~296 rows) | **Label noise** diluted supervision → **~−25 chrF** vs same-run control |
 | **M06 Policy B** | 2× strict duplication + same **2** expansion rows as Policy A | **~25 chrF** vs **52.25** (Policy A) — **mixture / weighting** can collapse gains |
 | **M07** | `confidence_v2` cap6/cap10 (236 strict + 6/10 expansion) vs M06 Policy A baseline | **~−6.6 chrF** — **narrow optimum**; more expansion from same pool **reintroduces noise** even with better scoring |
+| **M08** | Alignment-quality v2 (236 strict + **46** repaired full-sentence pairs) vs M06 Policy A baseline | **~−32.2 chrF** — **structural correctness ≠ useful supervision**; **distribution mismatch** dominates |
 
 ### M06 governance bullets (new)
 
@@ -324,6 +350,14 @@ Documented **negative results** and **positive controls** are part of the system
 - The M06 optimum is extremely narrow and cannot be expanded via confidence scoring
 - Even small additions of expansion data can reintroduce noise and degrade performance
 - Confidence scoring alone is insufficient to identify additional high-quality rows
+```
+
+### M08 governance bullets (new)
+
+```text
+- Alignment correctness does not guarantee training usefulness
+- Distribution alignment is more important than structural correctness
+- Recovered rows must match the model's learned distribution to be beneficial
 ```
 
 ### Data quality hierarchy (informal)
@@ -401,6 +435,7 @@ Full CI rigor (coverage gates, security scanning, reproducibility enforcement) d
 | v0.0.8-m05 | M05 complete — alignment expansion implemented; **regression** vs same-run control (~**−25 chrF**); precision > recall |
 | v0.0.9-m06 | M06 complete — precision-preserving gated expansion; Policy A **+6.89 chrF** vs same-run control; Policy B mixture failure documented |
 | v0.0.10-m07 | M07 complete — confidence-driven expansion fails; additional rows degrade performance; confirms M06 optimum is narrow and non-expandable |
+| v0.0.11-m08 | M08 complete — alignment-quality v2 repair fails (~−32 chrF vs M06 baseline); structural alignment insufficient; distribution mismatch as bottleneck |
 
 ## Related governance docs
 

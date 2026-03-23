@@ -11,6 +11,8 @@
 | 2026-03-22T14:30:00Z | docs | `M08_plan.md`, `M08_run1/2`, `M08_local_gpu_execution.md`; README M08 section |
 | 2026-03-22T14:35:00Z | fix | Early no-op gate: Candidate A requires M04 strict CSV fingerprint (no false stop) |
 | 2026-03-22T14:40:00Z | verify | `pytest tests`, `ruff check src tests` |
+| 2026-03-22T20:00:00Z | closeout | `M08_summary.md`, `M08_audit.md`, `M08_run2/3`, `docs/akk2eng.md`, M09 seed |
+| 2026-03-22T20:00:01Z | git | Merge `m08-alignment-quality-recovery` → `main`, tag `v0.0.11-m08`, push; monitor CI |
 
 ## Copy-paste anchors
 

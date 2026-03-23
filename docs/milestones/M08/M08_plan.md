@@ -5,7 +5,7 @@
 **Target branch:** `m08-alignment-quality-recovery`  
 **Audit target:** 5.0 / 5.0  
 **Baseline:** `main` after M07 closeout (`v0.0.10-m07`)  
-**Status:** Phases 1–3 implemented (builder + tests + docs). **Phase 4 (local GPU) not started.**
+**Status:** **Closed** — regression (`v0.0.11-m08`). Phases 1–4 complete; **no Kaggle submission**. Closeout: `M08_summary.md`, `M08_audit.md`.
 
 ---
 
@@ -81,8 +81,8 @@ Emitted in **`alignment_quality_v2_report.json`**:
 | **1** | Builder + reports + recovered-docs CSV | ✅ |
 | **2** | CPU-safe tests | ✅ |
 | **3** | Docs / runbooks | ✅ |
-| **4** | Local GPU 3-run matrix | ⏸️ User-run (see `M08_local_gpu_execution.md`) |
-| **Closeout** | Summary, audit, `docs/akk2eng.md`, tag, M09 seed | ⏸️ After Phase 4 + permission |
+| **4** | Local GPU 3-run matrix | ✅ (regression documented in `M08_run2_training_eval.md`) |
+| **Closeout** | Summary, audit, `docs/akk2eng.md`, tag, M09 seed, CI log | ✅ |
 
 ---
 

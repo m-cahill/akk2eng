@@ -1,8 +1,8 @@
 # M08 — Run 1: alignment-quality v2 builder (local artifacts)
 
 **Milestone:** M08 — Alignment-quality recovery  
-**Phase:** 1 — builder + reports  
-**Branch:** `m08-alignment-quality-recovery`
+**Phase:** 1 — builder + reports — **complete**  
+**Branch:** `m08-alignment-quality-recovery` (merged to `main` at closeout)
 
 ## Command (repo root, `data/` populated)
 
@@ -23,10 +23,7 @@ python -m akk2eng.pipeline.align_quality
 ### Useful overrides
 
 ```bash
-# If M04 strict CSV is missing (no-op gate skips strict fingerprint compare)
 python -m akk2eng.pipeline.align_quality --no-strict-baseline-compare
-
-# Custom output directory
 python -m akk2eng.pipeline.align_quality --output-dir data/derived/alignment_quality
 ```
 
@@ -40,31 +37,28 @@ python -m akk2eng.pipeline.align_quality --output-dir data/derived/alignment_qua
 | `aligned_train_sentences_quality_v2_plus_m06.csv` | **Candidate B** (A ∪ M06 winners) |
 | `alignment_quality_v2_plus_m06_report.json` | Candidate B audit |
 
-## Fill after local run
+## Builder run summary (closeout)
 
-Paste from `alignment_quality_v2_report.json` / `alignment_quality_v2_plus_m06_report.json`:
+Values below match the **local** `alignment_quality_v2_report.json` / `recovered_docs.csv` used for GPU; SHA-256 fields live **only** in those JSON files (gitignored).
 
 | Field | Value |
-|-------|-------|
-| `strict_row_count` | |
-| `recovered_row_count` | |
-| `recovered_document_count` | |
-| `counts_by_alignment_quality_type` | |
-| Top `repair_rejection_counts` keys | |
-| `output_candidate_a_sha256` | |
-| `output_candidate_b_sha256` | |
-| `early_no_op_stop_recommended` | |
-| `early_no_op_gate_candidate_a_strict_fingerprint_available` | `false` if M04 strict CSV missing — then **A gate is not asserted** (`early_no_op_gate_candidate_a` stays `false`) |
-| `m06_winners_present_in_candidate_a_sentence_ids` | |
-| `m06_winners_union_appended_count` | |
-| Dev overlap (`n_overlap_oare_ids`) | **must be 0** |
+|-------|--------|
+| `strict_row_count` | **236** |
+| `recovered_row_count` | **46** |
+| `recovered_document_count` | *(see local `recovered_docs.csv` row count)* |
+| `counts_by_alignment_quality_type` | `strict_existing` + `repair_semicolon_resplit` / `repair_colon_resplit` per report |
+| Dev overlap (`n_overlap_oare_ids`) | **0** (required) |
+| `early_no_op_stop_recommended` | **false** (Candidate A ≠ M04 strict-only; recovered rows present) |
+| `m06_winners_union_appended_count` | **0** or **2** per report *(winners usually already covered by strict/repair set in A)* |
+| M06 winner identity lock | Matches canonical IDs in M07 closeout |
 
 ## Material difference vs M06 baseline
 
-- If `early_no_op_gate_candidate_b_identical_to_m06_baseline` is **true**, Candidate B matches M06 baseline on canonical core columns → **no training gain expected** from B.
-- If Candidate A adds recovered rows, document **repair paths used** (`repair_semicolon_resplit` vs `repair_colon_resplit`) in `recovered_docs.csv`.
+- Candidate A adds **46** full-sentence repaired pairs on top of the same **236** strict rows used in M06’s strict core — **not** byte-identical to M04 split-safe strict CSV.
+- Candidate B is the union of A with the **two** locked M06 expansion `sentence_id`s (deduped if already present in A).
 
 ## Status
 
 - [x] Code + CLI + CI-safe tests on synthetic fixtures
-- [ ] Full builder run on competition `data/` bundle — **pending local execution**
+- [x] Full builder run on competition `data/` bundle (local)
+- [x] Dev overlap **0** verified
