@@ -19,7 +19,8 @@ def test_pipeline_writes_submission(tmp_path: Path) -> None:
     submission_csv = tmp_path / "submission.csv"
     _minimal_test_csv(test_csv)
 
-    run_pipeline(test_csv, submission_csv, quiet=True, batch_size=2)
+    # Lexicon path loads train.csv for form→lexeme pairs; CI has no `data/train.csv` (gitignored).
+    run_pipeline(test_csv, submission_csv, quiet=True, batch_size=2, use_lexicon=False)
 
     assert submission_csv.is_file()
     out = pd.read_csv(submission_csv)
@@ -27,7 +28,7 @@ def test_pipeline_writes_submission(tmp_path: Path) -> None:
     assert len(out) == 2
     assert out["translation"].astype(str).str.len().gt(0).all()
 
-    run_pipeline(test_csv, submission_csv, quiet=True, batch_size=2)
+    run_pipeline(test_csv, submission_csv, quiet=True, batch_size=2, use_lexicon=False)
     out2 = pd.read_csv(submission_csv)
     assert out["translation"].tolist() == out2["translation"].tolist()
 
