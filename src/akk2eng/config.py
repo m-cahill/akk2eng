@@ -74,3 +74,6 @@ DEFAULT_POLICY_B_REPORT_JSON = _SEL / "strict_plus_highconf_cap50_weighted2x_rep
 
 # M07: confidence_v2 selection outputs (under data/; gitignored)
 DEFAULT_CONFIDENCE_OUTPUT_DIR = Path("data") / "derived" / "confidence"
+
+# M08: alignment-quality v2 outputs (under data/; gitignored)
+DEFAULT_ALIGNMENT_QUALITY_OUTPUT_DIR = Path("data") / "derived" / "alignment_quality"

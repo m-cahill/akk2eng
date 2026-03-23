@@ -1,0 +1,3 @@
+display_name,text_uuid,sentence_uuid,sentence_obj_in_text,translation,first_word_transcription,first_word_spelling,first_word_number,first_word_obj_in_text,line_number,side,column
+t,m08-sh,s1,1,S1.,aa,,1,1,1.0,1,1
+t,m08-sh,s2,2,S2.,dd,,1,2,2.0,1,1

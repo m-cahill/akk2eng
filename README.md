@@ -192,6 +192,15 @@ python -m akk2eng.pipeline.select_confident_train
 
 Writes `data/derived/confidence/scored_expansion_pool.csv`, `strict_plus_confv2_cap{6,10}.csv`, and JSON reports (gitignored). GPU matrix: **`docs/milestones/M07/M07_local_gpu_execution.md`**.
 
+**M08 — alignment-quality v2 (strict + `;` / `:` clause resplit repair):**
+
+```bash
+# Requires train/dev splits, sentences aid, M06 Policy A baseline CSV, M04 split-safe strict CSV for no-op fingerprint
+python -m akk2eng.pipeline.align_quality
+```
+
+Writes `data/derived/alignment_quality/aligned_train_sentences_quality_v2_*.csv`, `recovered_docs.csv`, and JSON reports (gitignored). **GPU matrix:** **`docs/milestones/M08/M08_local_gpu_execution.md`**.
+
 Milestone-grade **3-epoch GPU** control + augmented train and dev eval (CUDA required): see **`docs/milestones/M05/M05_local_gpu_execution.md`**.
 
 **M04 — continue fine-tuning from `outputs/m01_t5`:**

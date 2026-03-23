@@ -1,0 +1,5 @@
+display_name,text_uuid,sentence_uuid,sentence_obj_in_text,translation,first_word_transcription,first_word_spelling,first_word_number,first_word_obj_in_text,line_number,side,column
+t,m08-cd1,x1,1,X1.,aa,,1,1,1.0,1,1
+t,m08-cd1,x2,2,X2.,dd,,1,2,2.0,1,1
+t,m08-cd2,y1,1,Y1.,aa,,1,1,1.0,1,1
+t,m08-cd2,y2,2,Y2.,dd,,1,2,2.0,1,1
