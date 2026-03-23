@@ -45,8 +45,7 @@ def test_deterministic_sort_sentence_rows(tmp_path: Path) -> None:
     train = tmp_path / "train.csv"
     aid = tmp_path / "aid.csv"
     train.write_text(
-        "oare_id,transliteration,translation\n"
-        "doc,x y z w,Alpha. Beta.\n",
+        "oare_id,transliteration,translation\ndoc,x y z w,Alpha. Beta.\n",
         encoding="utf-8",
     )
     aid.write_text(

@@ -178,9 +178,7 @@ def run_eval(
             f"lexicon: use_lexicon={do_lex}, n_entries={n_lex}, "
             f"max_entries={lcap if do_lex else 'n/a'}"
         ),
-        (
-            f"normalization: enabled={do_norm}, version={NORMALIZATION_VERSION}"
-        ),
+        (f"normalization: enabled={do_norm}, version={NORMALIZATION_VERSION}"),
         f"predictions: {pred_path}",
         f"metrics: {metrics_path}",
     ]

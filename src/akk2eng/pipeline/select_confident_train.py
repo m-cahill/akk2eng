@@ -34,8 +34,7 @@ def main() -> None:
         type=Path,
         default=DEFAULT_POLICY_A_TRAIN_CSV,
         help=(
-            "M06 Policy A baseline CSV for winner identity "
-            f"(default: {DEFAULT_POLICY_A_TRAIN_CSV})"
+            f"M06 Policy A baseline CSV for winner identity (default: {DEFAULT_POLICY_A_TRAIN_CSV})"
         ),
     )
     parser.add_argument(

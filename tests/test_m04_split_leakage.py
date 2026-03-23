@@ -19,8 +19,7 @@ def test_verify_overlap_passes_when_disjoint(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     dev.write_text(
-        "oare_id,transliteration,translation\n"
-        "d2,bb,Two.\n",
+        "oare_id,transliteration,translation\nd2,bb,Two.\n",
         encoding="utf-8",
     )
     r = verify_aligned_no_dev_oare_overlap(aligned, dev)
@@ -38,8 +37,7 @@ def test_verify_overlap_fails_when_shared_oare_id(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     dev.write_text(
-        "oare_id,transliteration,translation\n"
-        "SHARED,bb,Two.\n",
+        "oare_id,transliteration,translation\nSHARED,bb,Two.\n",
         encoding="utf-8",
     )
     r = verify_aligned_no_dev_oare_overlap(aligned, dev)

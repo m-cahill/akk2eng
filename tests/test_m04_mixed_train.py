@@ -14,9 +14,7 @@ def test_build_mixed_train_csv_order_and_stats(tmp_path: Path) -> None:
     out = tmp_path / "mixed.csv"
     stats_path = tmp_path / "stats.json"
     doc.write_text(
-        "oare_id,transliteration,translation\n"
-        "d1,aa bb,One.\n"
-        "d2,cc dd,Two.\n",
+        "oare_id,transliteration,translation\nd1,aa bb,One.\nd2,cc dd,Two.\n",
         encoding="utf-8",
     )
     ali.write_text(
